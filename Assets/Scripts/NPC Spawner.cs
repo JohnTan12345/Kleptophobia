@@ -42,9 +42,8 @@ public class NPCSpawner : MonoBehaviour
             {
                 if (totalSpawnedGuilty < totalGuilty && Random.Range(0f, 1f) < guiltySpawnChance)
                 {
-                    float i = Random.Range(0f, 3f); // Change based on max types of guilty NPCs
 
-                    switch (i) // Add based on max types of guilty NPCs
+                    switch (Random.Range(0f, 3f)) // Change and add based on max types of guilty NPCs
                     {
                         case < 1f:
                             targetNPCToSpawn = Careless;
@@ -64,6 +63,7 @@ public class NPCSpawner : MonoBehaviour
                     targetNPCToSpawn = Innocent;
                 }
 
+                
                 GameObject NPC = Instantiate(targetNPCToSpawn);
             }
         }
