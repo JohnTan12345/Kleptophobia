@@ -6,11 +6,13 @@ public class NPCSpawner : MonoBehaviour
 {
     public float NPCSpawnrate = 0f;
     public int totalGuilty = 0;
+    public int totalNPC = 50;
 
     private float guiltySpawnChance = 0f;
     private int totalSpawnedGuilty = 0;
     private GameObject targetNPCToSpawn;
     private List<GameObject> NPCList = new List<GameObject> {};
+    private List<Transform> spawnpoints = new List<Transform> {};
 
     [SerializeField]
     static GameObject Innocent;
@@ -23,36 +25,47 @@ public class NPCSpawner : MonoBehaviour
 
     void Awake()
     {
+        foreach (Transform spawnpoint in transform)
+        {
+            spawnpoints.Add(spawnpoint);
+        };
         StartCoroutine(SpawnNPC());
     }
 
     private IEnumerator SpawnNPC()
     {
-        yield return new WaitForSeconds(Random.Range(0f, NPCSpawnrate));
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(0f, NPCSpawnrate));
 
-
-        if (totalSpawnedGuilty < totalGuilty && Random.Range(0f, 1f) < guiltySpawnChance)
+            if (NPCList.Count < totalNPC)
             {
-                float i = Random.Range(0f, 3f); // Change based on max types of guilty NPCs
-
-                switch (i) // Add based on max types of guilty NPCs
+                if (totalSpawnedGuilty < totalGuilty && Random.Range(0f, 1f) < guiltySpawnChance)
                 {
-                    case < 1f:
-                        targetNPCToSpawn = Careless;
-                        break;
-                    case < 2f:
-                        targetNPCToSpawn = Average;
-                        break;
-                    case < 3f:
-                        targetNPCToSpawn = Careful;
-                        break;
-                }
-            }
-            else
-            {
-                targetNPCToSpawn = Innocent;
-            }
+                    float i = Random.Range(0f, 3f); // Change based on max types of guilty NPCs
 
-        Instantiate(targetNPCToSpawn);
+                    switch (i) // Add based on max types of guilty NPCs
+                    {
+                        case < 1f:
+                            targetNPCToSpawn = Careless;
+                            break;
+                        case < 2f:
+                            targetNPCToSpawn = Average;
+                            break;
+                        case < 3f:
+                            targetNPCToSpawn = Careful;
+                            break;
+                    }
+
+                    guiltySpawnChance += 0.01f;
+                }
+                else
+                {
+                    targetNPCToSpawn = Innocent;
+                }
+
+                GameObject NPC = Instantiate(targetNPCToSpawn);
+            }
+        }
     }
 }
