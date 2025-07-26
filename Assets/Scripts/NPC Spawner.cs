@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
 
 public class NPCSpawner : MonoBehaviour
@@ -8,27 +9,46 @@ public class NPCSpawner : MonoBehaviour
     public int totalGuilty = 0;
     public int totalNPC = 50;
 
-    private float guiltySpawnChance = 0f;
+    private GameObject GameManager;
+    private GameData gameData;
+    private float guiltySpawnChance = 1f;
     private int totalSpawnedGuilty = 0;
     private GameObject targetNPCToSpawn;
-    private List<GameObject> NPCList = new List<GameObject> {};
-    private List<Transform> spawnpoints = new List<Transform> {};
+    private List<Transform> spawnpoints = new List<Transform> { };
+    public List<GameObject> NPCList = new List<GameObject> { };
 
-    [SerializeField]
-    static GameObject Innocent;
-    [SerializeField]
-    static GameObject Careless;
-    [SerializeField]
-    static GameObject Average;
-    [SerializeField]
-    static GameObject Careful;
+    // Lists to carry over
+    private List<Transform> shelvesPoints = new List<Transform> { };
+    private List<Transform> registerPoints = new List<Transform> { };
+
+    public GameObject Innocent;
+    public GameObject Careless;
+    public GameObject Average;
+    public GameObject Careful;
+
+    public GameObject NPCGroup;
+    public GameObject shelvesGroup;
+    public GameObject registerGroup;
 
     void Awake()
     {
-        foreach (Transform spawnpoint in transform)
+        GameManager = GameObject.FindGameObjectsWithTag("GameManager")[0];
+
+        foreach (Transform point in transform)
         {
-            spawnpoints.Add(spawnpoint);
+            spawnpoints.Add(point);
         };
+
+        foreach (Transform point in shelvesGroup.transform)
+        {
+            shelvesPoints.Add(point);
+        };
+
+        foreach (Transform point in registerGroup.transform)
+        {
+            registerPoints.Add(point);
+        };
+
         StartCoroutine(SpawnNPC());
     }
 
@@ -36,6 +56,13 @@ public class NPCSpawner : MonoBehaviour
     {
         while (true)
         {
+
+            if (GameManager == null)
+            {
+                GameManager = GameObject.FindGameObjectWithTag("GameManager");
+                gameData = GameManager.GetComponent<GameData>();
+            }
+
             yield return new WaitForSeconds(Random.Range(0f, NPCSpawnrate));
 
             if (NPCList.Count < totalNPC)
@@ -56,16 +83,47 @@ public class NPCSpawner : MonoBehaviour
                             break;
                     }
 
-                    guiltySpawnChance += 0.01f;
+                    guiltySpawnChance = 0f;
+
                 }
                 else
                 {
                     targetNPCToSpawn = Innocent;
+                    guiltySpawnChance += 0.01f;
                 }
 
-                
-                GameObject NPC = Instantiate(targetNPCToSpawn);
+                Transform targetTransform = spawnpoints[Mathf.RoundToInt(Random.Range(0f, spawnpoints.Count - 1))];
+                GameObject NPC = Instantiate(targetNPCToSpawn, targetTransform.position, targetTransform.rotation);
+                NPC.transform.parent = NPCGroup.transform;
+
+                if (targetNPCToSpawn == Innocent) // Add behaviour script
+                {
+                    InnocentNPCBehaviour innocentNPCBehaviour = NPC.AddComponent<InnocentNPCBehaviour>();
+
+                    // Assign values
+                    innocentNPCBehaviour.spawnpoints = spawnpoints;
+                    innocentNPCBehaviour.shelvesPoints = shelvesPoints;
+                    innocentNPCBehaviour.registerPoints = registerPoints;
+                }
+                else if (targetNPCToSpawn == Careless)
+                {
+
+                }
+                else if (targetNPCToSpawn == Average)
+                {
+
+                }
+                else if (targetNPCToSpawn == Careful)
+                {
+
+                }
+
+                NPCList.Add(NPC);
+                DebounceScript debounce = NPC.AddComponent<DebounceScript>();
+                debounce.Debounce(2f);
             }
         }
     }
+    
+    
 }
