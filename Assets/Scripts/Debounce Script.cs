@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class DebounceScript : MonoBehaviour
 {
-    public bool debounce;
+    public bool debounce = true;
 
     public void Debounce(float time)
     {
-        debounce = true;
         StartCoroutine(SetDebounce(time));
     }
 

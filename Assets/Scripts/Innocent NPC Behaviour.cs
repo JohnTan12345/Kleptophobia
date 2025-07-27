@@ -5,17 +5,40 @@ using UnityEngine.AI;
 
 public class InnocentNPCBehaviour : MonoBehaviour
 {
-    public List<Transform> shelvesPoints;
-    public List<Transform> registerPoints;
-    public List<Transform> spawnpoints;
-
+    private List<Transform> shelvesPoints;
+    private List<Transform> registerPoints;
+    private List<Transform> spawnpoints;
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
 
+    public List<Transform> ShelvesPoints
+    {
+        set
+        {
+            shelvesPoints = new List<Transform>(value);
+        }
+    }
+
+    public List<Transform> RegisterPoints
+    {
+        set
+        {
+            registerPoints = new List<Transform>(value);
+        }
+    }
+
+    public List<Transform> Spawnpoints
+    {
+        set
+        {
+            spawnpoints = new List<Transform>(value);
+        }
+    }
+
     void Start()
     {
-        browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count - 1));
+        browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
         StartCoroutine(ShopActivities());
     }
 
@@ -43,12 +66,10 @@ public class InnocentNPCBehaviour : MonoBehaviour
             shelvesPoints.Remove(shelvesPoints[shelfnumber]);
             reachedDestination = false;
             browsinglength--;
-            Debug.Log(browsinglength);
             StartCoroutine(Idle());
         }
         else // Checkout
         {
-            Debug.Log("Checking out");
             while (!reachedDestination)
             {
                 targetDestination = registerPoints[Mathf.RoundToInt(Random.Range(0, registerPoints.Count - 1))];
@@ -56,7 +77,6 @@ public class InnocentNPCBehaviour : MonoBehaviour
                 yield return null;
             }
 
-            Debug.Log("checked Out");
             reachedDestination = false;
             yield return StartCoroutine(Idle());
 

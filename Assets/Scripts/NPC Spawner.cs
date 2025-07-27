@@ -102,9 +102,9 @@ public class NPCSpawner : MonoBehaviour
                     InnocentNPCBehaviour innocentNPCBehaviour = NPC.AddComponent<InnocentNPCBehaviour>();
 
                     // Assign values
-                    innocentNPCBehaviour.spawnpoints = spawnpoints;
-                    innocentNPCBehaviour.shelvesPoints = shelvesPoints;
-                    innocentNPCBehaviour.registerPoints = registerPoints;
+                    innocentNPCBehaviour.Spawnpoints = spawnpoints;
+                    innocentNPCBehaviour.ShelvesPoints = shelvesPoints;
+                    innocentNPCBehaviour.RegisterPoints = registerPoints;
                 }
                 else if (targetNPCToSpawn == Careless)
                 {
