@@ -7,11 +7,11 @@ public class NPCSpawner : MonoBehaviour
 {
     public float NPCSpawnrate = 0f;
     public int totalGuilty = 0;
-    public int totalNPC = 50;
+    public int totalNPC = 1;
 
     private GameObject GameManager;
     private GameData gameData;
-    private float guiltySpawnChance = 1f;
+    private float guiltySpawnChance = 0f;
     private int totalSpawnedGuilty = 0;
     private GameObject targetNPCToSpawn;
     private List<Transform> spawnpoints = new List<Transform> { };
@@ -34,19 +34,20 @@ public class NPCSpawner : MonoBehaviour
     {
         GameManager = GameObject.FindGameObjectsWithTag("GameManager")[0];
 
-        foreach (Transform point in transform)
+        foreach (Transform spawnpoint in transform)
         {
-            spawnpoints.Add(point);
+            spawnpoints.Add(spawnpoint);
         };
 
-        foreach (Transform point in shelvesGroup.transform)
+        foreach (Transform shelf in shelvesGroup.transform)
         {
-            shelvesPoints.Add(point);
+            Debug.Log(shelf.Find("Destination"));
+            shelvesPoints.Add(shelf.Find("Destination"));
         };
 
-        foreach (Transform point in registerGroup.transform)
+        foreach (Transform register in registerGroup.transform)
         {
-            registerPoints.Add(point);
+            registerPoints.Add(register.Find("Destination"));
         };
 
         StartCoroutine(SpawnNPC());

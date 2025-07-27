@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class NPCDespawner : MonoBehaviour
 {
-    private DebounceScript debounce;
 
     public GameObject Spawnpoints;
 
