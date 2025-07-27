@@ -1,3 +1,9 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 25 July 2025
+// Description: Stops NPCs from instantly despawning for now
+//===========================================================================================================
+
 using System.Collections;
 using UnityEngine;
 

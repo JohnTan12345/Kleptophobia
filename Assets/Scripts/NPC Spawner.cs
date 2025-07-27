@@ -1,6 +1,11 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 25 July 2025
+// Description: Spawns NPCs
+//===========================================================================================================
+
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine;
 
 public class NPCSpawner : MonoBehaviour
@@ -9,8 +14,6 @@ public class NPCSpawner : MonoBehaviour
     public int totalGuilty = 0;
     public int totalNPC = 1;
 
-    private GameObject GameManager;
-    private GameData gameData;
     private float guiltySpawnChance = 0f;
     private int totalSpawnedGuilty = 0;
     private GameObject targetNPCToSpawn;
@@ -32,8 +35,6 @@ public class NPCSpawner : MonoBehaviour
 
     void Awake()
     {
-        GameManager = GameObject.FindGameObjectsWithTag("GameManager")[0];
-
         foreach (Transform spawnpoint in transform)
         {
             spawnpoints.Add(spawnpoint);
@@ -57,13 +58,6 @@ public class NPCSpawner : MonoBehaviour
     {
         while (true)
         {
-
-            if (GameManager == null)
-            {
-                GameManager = GameObject.FindGameObjectWithTag("GameManager");
-                gameData = GameManager.GetComponent<GameData>();
-            }
-
             yield return new WaitForSeconds(Random.Range(0f, NPCSpawnrate));
 
             if (NPCList.Count < totalNPC)

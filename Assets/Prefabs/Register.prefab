@@ -68,6 +68,7 @@ GameObject:
   - component: {fileID: 6599487656279865177}
   - component: {fileID: 4510321042793352911}
   - component: {fileID: 421062665284584373}
+  - component: {fileID: -5288967812489953183}
   m_Layer: 0
   m_Name: Register
   m_TagString: Untagged
@@ -423,3 +424,15 @@ MonoBehaviour:
     _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"Available","value":{"$content":false,"$type":"System.Boolean"},"typeHandle":{"Identification":"System.Boolean,
       mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
     _objectReferences: []
+--- !u!114 &-5288967812489953183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5450568009638191874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 242aae1823ffa4640aa3270e0fefc6d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,3 +1,9 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 25 July 2025
+// Description: Innocent NPC behaviour
+//===========================================================================================================
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -70,9 +76,9 @@ public class InnocentNPCBehaviour : MonoBehaviour
         }
         else // Checkout
         {
-            while (!reachedDestination)
+            while (!reachedDestination) // Update to queue up eventually
             {
-                targetDestination = registerPoints[Mathf.RoundToInt(Random.Range(0, registerPoints.Count - 1))];
+                yield return targetDestination = GetAvailableRegister().Find("Destination");
                 ToDestination();
                 yield return null;
             }
@@ -89,14 +95,50 @@ public class InnocentNPCBehaviour : MonoBehaviour
         }
     }
 
-    private IEnumerator Idle()
+    private IEnumerator Idle() // Planned for animations
     {
         yield return new WaitForSeconds(Random.Range(2f, 5f));
         StartCoroutine(ShopActivities());
     }
 
-    private void ToDestination()
+    private void ToDestination() // Go to destination point
     {
         GetComponent<NavMeshAgent>().SetDestination(targetDestination.position);
+    }
+
+    private Transform GetAvailableRegister() // Get the first available register
+    {
+        Transform availableRegister = null;
+        Transform shortestLineRegister = null;
+        int shortestLineAmount = 0;
+
+        foreach (Transform registerPoint in registerPoints)
+        {
+            Transform register = registerPoint.parent;
+            RegisterBehaviour registerBehaviour = register.GetComponent<RegisterBehaviour>();
+            if (registerBehaviour.available)
+            {
+                registerBehaviour.available = false;
+                availableRegister = register;
+            }
+            else
+            {
+                if (shortestLineAmount == 0 || registerBehaviour.customersInLine.Count < shortestLineAmount)
+                {
+                    shortestLineAmount = registerBehaviour.customersInLine.Count;
+                    shortestLineRegister = register;
+                }
+            }
+        }
+
+        if (availableRegister == null)
+        {
+            availableRegister = shortestLineRegister;
+        }
+
+        shortestLineRegister = null;
+        shortestLineAmount = 0;
+
+        return availableRegister;
     }
 }
