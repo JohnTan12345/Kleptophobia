@@ -11,12 +11,15 @@ using UnityEngine.AI;
 
 public class InnocentNPCBehaviour : MonoBehaviour
 {
+    [SerializeField]
+    string status;
     private List<Transform> shelvesPoints;
     private List<Transform> registerPoints;
     private List<Transform> spawnpoints;
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
+    private Vector3 targetDestinationVector3;
 
     public List<Transform> ShelvesPoints
     {
@@ -44,14 +47,15 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
     void Start()
     {
-        browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
+        browsinglength = 0; //Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
         StartCoroutine(ShopActivities());
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == targetDestination.gameObject)
+        if (targetDestination != null && other.gameObject == targetDestination.gameObject)
         {
+            Debug.Log(gameObject);
             reachedDestination = true;
         }
     }
@@ -61,6 +65,8 @@ public class InnocentNPCBehaviour : MonoBehaviour
         if (browsinglength > 0) // Browsing Shelves
         {
             int shelfnumber = Mathf.RoundToInt(Random.Range(0, shelvesPoints.Count - 1));
+
+            status = "browsing";
 
             while (!reachedDestination) // Go To Shelves
             {
@@ -76,10 +82,36 @@ public class InnocentNPCBehaviour : MonoBehaviour
         }
         else // Checkout
         {
-            while (!reachedDestination) // Update to queue up eventually
+            Transform register = null;
+            while (register == null)
             {
-                yield return targetDestination = GetAvailableRegister().Find("Destination");
-                ToDestination();
+                register = GetAvailableRegister();
+                yield return null;
+            }
+
+            SortedList<GameObject, int> customersInLine = register.GetComponent<RegisterBehaviour>().CustomersInLine;
+            bool checkingOut = true;
+
+            while (!reachedDestination || checkingOut) // Update to queue up eventually
+            {
+                customersInLine.TryGetValue(gameObject, out int i);
+                if (!customersInLine.ContainsKey(gameObject))
+                {
+                    targetDestination = register;
+                    ToDestination();
+                }
+                else if (customersInLine.Count == 0 || i == 0)
+                {
+                    targetDestination = register.Find("Destination");
+                    checkingOut = false;
+                    ToDestination();
+                }
+                else
+                {
+                    targetDestination = register.Find(string.Format("Waiting {0}", i));
+                    reachedDestination = false;
+                    ToDestination();
+                }
                 yield return null;
             }
 
@@ -110,7 +142,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
     {
         Transform availableRegister = null;
         Transform shortestLineRegister = null;
-        int shortestLineAmount = 0;
+        int shortestLineAmount = 5;
 
         foreach (Transform registerPoint in registerPoints)
         {
@@ -123,9 +155,9 @@ public class InnocentNPCBehaviour : MonoBehaviour
             }
             else
             {
-                if (shortestLineAmount == 0 || registerBehaviour.customersInLine.Count < shortestLineAmount)
+                if (registerBehaviour.CustomersInLine.Count < shortestLineAmount)
                 {
-                    shortestLineAmount = registerBehaviour.customersInLine.Count;
+                    shortestLineAmount = registerBehaviour.CustomersInLine.Count;
                     shortestLineRegister = register;
                 }
             }

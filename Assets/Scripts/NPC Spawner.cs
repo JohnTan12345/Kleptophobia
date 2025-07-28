@@ -13,7 +13,6 @@ public class NPCSpawner : MonoBehaviour
     public float NPCSpawnrate = 0f;
     public int totalGuilty = 0;
     public int totalNPC = 1;
-
     private float guiltySpawnChance = 0f;
     private int totalSpawnedGuilty = 0;
     private GameObject targetNPCToSpawn;
@@ -42,7 +41,6 @@ public class NPCSpawner : MonoBehaviour
 
         foreach (Transform shelf in shelvesGroup.transform)
         {
-            Debug.Log(shelf.Find("Destination"));
             shelvesPoints.Add(shelf.Find("Destination"));
         };
 
