@@ -48,7 +48,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
     void Start()
     {
-        browsinglength = 0; //Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
+        browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
         StartCoroutine(ShopActivities());
     }
 
@@ -81,14 +81,6 @@ public class InnocentNPCBehaviour : MonoBehaviour
         else // Checkout
         {
             bool firstInLine = false;
-
-            while (register == null)
-            {
-                checkingOut = true;
-                register = GetAvailableRegister();
-                yield return null;
-            }
-
             while (true)
             {
                 if (!firstInLine)
@@ -102,14 +94,27 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
                 while (!reachedDestination)
                 {
+
+                    while (register == null)
+                    {
+                        checkingOut = true;
+                        register = GetAvailableRegister();
+                        yield return null;
+                    }
+
+
                     if (checkingOut)
                     {
                         RegisterVariables registerVariables = register.GetComponent<RegisterVariables>();
 
                         if (!registerVariables.CustomersInLine.ContainsValue(gameObject))
                         {
+                            if (registerVariables.CustomersInLine.Count > 4)
+                            {
+                                register = null;
+                                continue;
+                            }
                             targetDestination = register.Find("Trigger Area");
-                            ToDestination();
                         }
                         else
                         {
@@ -123,14 +128,14 @@ public class InnocentNPCBehaviour : MonoBehaviour
                             {
                                 targetDestination = register.Find("Destination");
                                 firstInLine = true;
-                                
+
                             }
-                            ToDestination();
                         }
+                        Debug.Log(string.Format("{0}\ntarget: {1}", gameObject, targetDestination));
                     }
+                    ToDestination();
                     yield return null;
                 }
-
             }
             checkingOut = false;
             reachedDestination = false;
