@@ -20,28 +20,16 @@ public class RegisterBehaviour : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        bool inLine = customersInLine.ContainsKey(other.gameObject);
-        if (!inLine)
+        if (other.gameObject.GetComponent<InnocentNPCBehaviour>() != null)
         {
-            CustomersInLine.Add(other.gameObject, customersInLine.Count);
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        bool inLine = customersInLine.ContainsKey(other.gameObject);
-        if (!inLine)
-        {
-            CustomersInLine.Remove(other.gameObject);
-
-            foreach(GameObject customers in customersInLine.Keys)
+            bool inLine = customersInLine.ContainsKey(other.gameObject);
+            bool targetRegister = other.gameObject.GetComponent<InnocentNPCBehaviour>().TargetDestination;
+            if (!inLine && other.gameObject.GetComponent<InnocentNPCBehaviour>().checkingOut && targetRegister == transform)
             {
-                customersInLine[customers]--;
+                CustomersInLine.Add(other.gameObject, customersInLine.Count);
             }
         }
     }
-
-
 
     private void UpdateAvailability()
     {

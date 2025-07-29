@@ -15,6 +15,9 @@ public class NPCSpawner : MonoBehaviour
     public int totalNPC = 1;
     private float guiltySpawnChance = 0f;
     private int totalSpawnedGuilty = 0;
+
+    private int totalNPCSpawned = 0;
+
     private GameObject targetNPCToSpawn;
     private List<Transform> spawnpoints = new List<Transform> { };
     public List<GameObject> NPCList = new List<GameObject> { };
@@ -113,6 +116,7 @@ public class NPCSpawner : MonoBehaviour
 
                 NPCList.Add(NPC);
                 DebounceScript debounce = NPC.AddComponent<DebounceScript>();
+                NPC.name = totalNPCSpawned++ + NPC.name;
                 debounce.Debounce(2f);
             }
         }
