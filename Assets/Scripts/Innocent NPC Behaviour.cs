@@ -17,7 +17,8 @@ public class InnocentNPCBehaviour : MonoBehaviour
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
-    public bool checkingOut;
+    private Transform register = null;
+    public bool checkingOut = false;
 
     public Transform TargetDestination { get { return targetDestination; } }
 
@@ -47,7 +48,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
     void Start()
     {
-        browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
+        browsinglength = 0; //Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
         StartCoroutine(ShopActivities());
     }
 
@@ -79,57 +80,61 @@ public class InnocentNPCBehaviour : MonoBehaviour
         }
         else // Checkout
         {
-            Transform register = null;
-            SortedList<GameObject, int> customersInLine = null;
-            checkingOut = true;
             bool firstInLine = false;
-            Transform registerDestination = null;
 
-            while (!reachedDestination || !firstInLine) // Update to queue up eventually
+            while (register == null)
             {
-
-                if (checkingOut && (register == null || customersInLine.Count > 5))
-                {
-                    Debug.Log("E");
-                    register = GetAvailableRegister();
-
-                    if (register == null)
-                    {
-                        yield return new WaitForSecondsRealtime(.2f);
-                        continue;
-                    }
-
-                    customersInLine = register.GetComponent<RegisterBehaviour>().CustomersInLine;
-                    registerDestination = register.Find("Destination");
-                }
-
-                if (!firstInLine && targetDestination == registerDestination)
-                    {
-                        firstInLine = true;
-                    }
-
-                customersInLine.TryGetValue(gameObject, out int i);
-                if (!customersInLine.ContainsKey(gameObject))
-                {
-                    targetDestination = register;
-                    ToDestination();
-                }
-                else if (customersInLine.Count == 0 || i == 0)
-                {
-                    targetDestination = registerDestination;
-                    ToDestination();
-                }
-                else if (customersInLine.Count > 0 && i != 0)
-                {
-                    targetDestination = register.Find(string.Format("Waiting {0}", i));
-                    ToDestination();
-                }
+                checkingOut = true;
+                register = GetAvailableRegister();
                 yield return null;
             }
 
+            while (true)
+            {
+                if (!firstInLine)
+                {
+                    reachedDestination = false;
+                }
+                else
+                {
+                    break;
+                }
+
+                while (!reachedDestination)
+                {
+                    if (checkingOut)
+                    {
+                        RegisterVariables registerVariables = register.GetComponent<RegisterVariables>();
+
+                        if (!registerVariables.CustomersInLine.ContainsValue(gameObject))
+                        {
+                            targetDestination = register.Find("Trigger Area");
+                            ToDestination();
+                        }
+                        else
+                        {
+                            int i = registerVariables.CustomersInLine.Keys[registerVariables.CustomersInLine.IndexOfValue(gameObject)];
+
+                            if (i != 0)
+                            {
+                                targetDestination = register.Find(string.Format("Waiting {0}", i));
+                            }
+                            else
+                            {
+                                targetDestination = register.Find("Destination");
+                                firstInLine = true;
+                                
+                            }
+                            ToDestination();
+                        }
+                    }
+                    yield return null;
+                }
+
+            }
+            checkingOut = false;
             reachedDestination = false;
             yield return StartCoroutine(Idle());
-            checkingOut = false;
 
             while (!reachedDestination)
             {
@@ -157,20 +162,21 @@ public class InnocentNPCBehaviour : MonoBehaviour
         Transform shortestLineRegister = null;
         int shortestLineAmount = 5;
 
-        foreach (Transform registerPoint in registerPoints)
+        for (int i = 0; i < registerPoints.Count; i++)
         {
+            Transform registerPoint = registerPoints[i];
             Transform register = registerPoint.parent;
-            RegisterBehaviour registerBehaviour = register.GetComponent<RegisterBehaviour>();
-            if (registerBehaviour.available)
+            RegisterVariables registerVariables = register.GetComponent<RegisterVariables>();
+
+            if (registerVariables.available)
             {
-                registerBehaviour.available = false;
                 availableRegister = register;
             }
             else
             {
-                if (registerBehaviour.CustomersInLine.Count < shortestLineAmount)
+                if (registerVariables.CustomersInLine.Count < shortestLineAmount)
                 {
-                    shortestLineAmount = registerBehaviour.CustomersInLine.Count;
+                    shortestLineAmount = registerVariables.CustomersInLine.Count;
                     shortestLineRegister = register;
                 }
             }
