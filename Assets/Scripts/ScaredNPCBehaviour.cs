@@ -99,6 +99,25 @@ public class ScaredNPCBehaviour : MonoBehaviour
         Destroy(gameObject); // or gameObject.SetActive(false);
     }
 
+    private Transform GetNearestExit()
+    {
+        Transform nearest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (Transform exit in exitPoints)
+        {
+            float dist = Vector3.Distance(transform.position, exit.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = exit;
+            }
+        }
+
+        return nearest;
+    }
+
+
 
 
 
