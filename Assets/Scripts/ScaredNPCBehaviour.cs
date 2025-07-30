@@ -62,11 +62,43 @@ public class ScaredNPCBehaviour : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(0.5f, 1.5f));
         isScared = true;
 
+        JumpScare();
 
         // Brief pause to let jump resolve
         yield return new WaitForSeconds(0.75f);
 
+        StartCoroutine(Flee());
+
     }
+
+    private void JumpScare()
+    {
+        if (rb != null)
+        {
+            agent.isStopped = true; // Pause pathfinding temporarily
+            rb.AddForce(Vector3.up * 7f, ForceMode.Impulse); // Scared jump
+        }
+    }
+
+    private IEnumerator Flee()
+    {
+        isFleeing = true;
+
+        if (targetExit != null)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(targetExit.position);
+
+            while (Vector3.Distance(transform.position, targetExit.position) > 1.5f)
+            {
+                yield return null;
+            }
+        }
+
+        Debug.Log($"{gameObject.name} has fled!");
+        Destroy(gameObject); // or gameObject.SetActive(false);
+    }
+
 
 
 
