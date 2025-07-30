@@ -112,7 +112,6 @@ public class ScaredNPCBehaviour : MonoBehaviour
     private IEnumerator DelayedFear()
     {
         yield return new WaitForSeconds(Random.Range(0.5f, 1.5f));
-        isScared = true;
 
         JumpScare();
 
