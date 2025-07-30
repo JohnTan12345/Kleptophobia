@@ -83,6 +83,7 @@ public class ScaredNPCBehaviour : MonoBehaviour
     private IEnumerator Flee()
     {
         isFleeing = true;
+        targetExit = GetNearestExit();
 
         if (targetExit != null)
         {
