@@ -118,6 +118,14 @@ public class ScaredNPCBehaviour : MonoBehaviour
         return nearest;
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && !isScared)
+        {
+            GetScared();
+        }
+    }
+
 
 
 
