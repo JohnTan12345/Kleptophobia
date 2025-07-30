@@ -48,5 +48,26 @@ public class ScaredNPCBehaviour : MonoBehaviour
         }
     }
 
+    public void GetScared()
+    {
+        if (!isScared)
+        {
+            if (wanderRoutine != null) StopCoroutine(wanderRoutine);
+            StartCoroutine(DelayedFear());
+        }
+    }
+
+    private IEnumerator DelayedFear()
+    {
+        yield return new WaitForSeconds(Random.Range(0.5f, 1.5f));
+        isScared = true;
+
+
+        // Brief pause to let jump resolve
+        yield return new WaitForSeconds(0.75f);
+
+    }
+
+
 
 }
