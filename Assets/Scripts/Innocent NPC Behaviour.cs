@@ -131,7 +131,6 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
                             }
                         }
-                        Debug.Log(string.Format("{0}\ntarget: {1}", gameObject, targetDestination));
                     }
                     ToDestination();
                     yield return null;
