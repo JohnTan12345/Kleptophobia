@@ -11,15 +11,25 @@ using UnityEngine.AI;
 
 public class ScaredNPCBehaviour : MonoBehaviour
 {
+    private List<Transform> shelvesPoints;
     private List<Transform> exitPoints;
-    private Transform targetExit;
 
+    private Transform targetDestination;
+    private Transform targetExit;
+    private int browsingLength;
+    private bool reachedDestination = false;
     private bool isScared = false;
     private bool isFleeing = false;
 
     private NavMeshAgent agent;
     private Rigidbody rb;
-    private Coroutine wanderRoutine;
+
+    private Coroutine browseRoutine;
+
+    public List<Transform> ShelvesPoints
+    {
+        set { shelvesPoints = new List<Transform>(value); }
+    }
 
     public List<Transform> ExitPoints
     {
@@ -31,7 +41,45 @@ public class ScaredNPCBehaviour : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
 
-        wanderRoutine = StartCoroutine(Wander());
+        browsingLength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
+        browseRoutine = StartCoroutine(BrowseShelves());
+    }
+
+     void OnTriggerEnter(Collider other)
+    {
+        if (targetDestination != null && other.gameObject == targetDestination.gameObject)
+        {
+            reachedDestination = true;
+        } 
+        if (other.CompareTag("Player") && !isScared)
+        {
+            GetScared();
+        }
+    }
+
+    private IEnumerator BrowseShelves()
+    {
+        while (browsingLength > 0 && !isScared)
+        {
+            int shelfIndex = Random.Range(0, shelvesPoints.Count);
+            targetDestination = shelvesPoints[shelfIndex];
+            agent.SetDestination(targetDestination.position);
+            reachedDestination = false;
+
+            while (!reachedDestination && !isScared)
+            {
+                yield return null;
+            }
+
+            shelvesPoints.RemoveAt(shelfIndex);
+            browsingLength--;
+            yield return new WaitForSeconds(Random.Range(2f, 4f));
+        }
+
+        if (!isScared)
+        {
+            StartCoroutine(Wander());
+        }
     }
 
     void Update()
@@ -52,7 +100,11 @@ public class ScaredNPCBehaviour : MonoBehaviour
     {
         if (!isScared)
         {
-            if (wanderRoutine != null) StopCoroutine(wanderRoutine);
+            isScared = true;
+
+            if (browseRoutine != null)
+                StopCoroutine(browseRoutine);
+
             StartCoroutine(DelayedFear());
         }
     }
@@ -118,13 +170,7 @@ public class ScaredNPCBehaviour : MonoBehaviour
         return nearest;
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player") && !isScared)
-        {
-            GetScared();
-        }
-    }
+
 
 
 
