@@ -15,8 +15,6 @@ public class RegisterVariables : MonoBehaviour
 
     public void CheckCustomerLine()
     {
-        string debugText = transform.parent + " ";
-
         if (customersInLine.Count == 0)
         {
             available = true;
@@ -25,12 +23,5 @@ public class RegisterVariables : MonoBehaviour
         {
             available = false;
         }
-        
-            for (int i = 0; i < customersInLine.Count; i++)
-            {
-                debugText += "\nIndex:" + i + ", NPC: " + customersInLine[i] + " ";
-            }
-
-                Debug.Log(debugText);
     }
 }
