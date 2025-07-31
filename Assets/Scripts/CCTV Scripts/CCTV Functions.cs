@@ -5,43 +5,39 @@ using UnityEngine.UI;
 
 public class CCTVFunctions : MonoBehaviour
 {
-    public float maxRotationDegrees = 0f;
-    private float changeInRotation = 10f;
-    [SerializeField]
+    public float maxRotationDegrees = 45f;
+    public float changeInRotation = 10f;
     private float currentRotation = 0f;
-    private bool autoRotate = false;
+    public bool autoRotate = false;
+    public float scrollBarValue = 0.5f;
     private bool moveLeft;
 
-    private Scrollbar scrollbar;
-    private TextMeshProUGUI AutoRotateText;
+    public Scrollbar scrollbar;
+    public TextMeshProUGUI autoRotateText;
 
-    void Start()
-    {
-        Transform Canvas = transform.Find("Canvas");
-        Button AutoRotateButton = Canvas.Find("Rotate Button").GetComponent<Button>();
-        AutoRotateText = Canvas.Find("Rotate Button").Find("Text").GetComponent<TextMeshProUGUI>();
-        scrollbar = Canvas.Find("Camera Angle Slider").GetComponent<Scrollbar>();
-        AutoRotateButton.onClick.AddListener(OnButtonPress);
-        scrollbar.onValueChanged.AddListener(OnValueChanged);
-    }
-
-    private void OnButtonPress()
+    public void OnButtonPress()
     {
         autoRotate = !autoRotate;
 
         if (autoRotate)
         {
-            AutoRotateText.text = "II";
+            autoRotateText.text = "II";
             StartCoroutine(AutoRotate());
         }
         else
         {
-            AutoRotateText.text = ">";
+            autoRotateText.text = ">";
         }
     }
 
-    private void OnValueChanged(float value)
+    public void OnValueChanged(float value)
     {
+
+        if (scrollbar != null)
+        {
+            scrollBarValue = scrollbar.value;
+        }
+
         float newRotation = value * maxRotationDegrees * 2 - maxRotationDegrees;
         transform.Rotate(0, newRotation - currentRotation, 0, Space.World);
         currentRotation = newRotation;
@@ -49,7 +45,7 @@ public class CCTVFunctions : MonoBehaviour
 
     private IEnumerator AutoRotate()
     {
-        if (currentRotation > maxRotationDegrees / 2)
+        if (scrollBarValue > .5)
         {
             moveLeft = false;
         }
@@ -80,8 +76,14 @@ public class CCTVFunctions : MonoBehaviour
                     moveLeft = true;
                 }
             }
-            scrollbar.value = (currentRotation + maxRotationDegrees) / (2 * maxRotationDegrees);
-            OnValueChanged(scrollbar.value);
+            scrollBarValue = (currentRotation + maxRotationDegrees) / (2 * maxRotationDegrees);
+            
+            if (scrollbar != null)
+            {
+                scrollbar.value = scrollBarValue;
+            }
+
+            OnValueChanged(scrollBarValue);
             yield return null;
         }
     }
