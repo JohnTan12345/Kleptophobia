@@ -125,7 +125,10 @@ public class NPCSpawner : MonoBehaviour
                 }
                 else if (targetNPCType == "careless")
                 {
+                    CarelessShoplifterBehaviour carelessShoplifterBehaviour = NPC.AddComponent<CarelessShoplifterBehaviour>();
 
+                    carelessShoplifterBehaviour.ShelvesPoints = shelvesPoints;
+                    carelessShoplifterBehaviour.Spawnpoints = spawnpoints;
                 }
                 else if (targetNPCType == "scared")
                 {
@@ -136,7 +139,11 @@ public class NPCSpawner : MonoBehaviour
                 }
                 else if (targetNPCType == "careful")
                 {
+                    CarefulShoplifterBehaviour carefulShoplifterBehaviour = NPC.AddComponent<CarefulShoplifterBehaviour>();
 
+                    carefulShoplifterBehaviour.ShelvesPoints = shelvesPoints;
+                    carefulShoplifterBehaviour.RegisterPoints = registerPoints;
+                    carefulShoplifterBehaviour.Spawnpoints = spawnpoints;
                 }
 
                 NPCList.Add(NPC);
