@@ -19,6 +19,7 @@ public class NPCSpawner : MonoBehaviour
     private int totalNPCSpawned = 0;
 
     private GameObject targetNPCToSpawn;
+    private string targetNPCType;
     private List<Transform> spawnpoints = new List<Transform> { };
     public List<GameObject> NPCList = new List<GameObject> { };
 
@@ -26,14 +27,19 @@ public class NPCSpawner : MonoBehaviour
     private List<Transform> shelvesPoints = new List<Transform> { };
     private List<Transform> registerPoints = new List<Transform> { };
 
-    public GameObject Innocent;
-    public GameObject Careless;
-    public GameObject Average;
-    public GameObject Careful;
+    public GameObject[] NPCPrefabs = {};
 
     public GameObject NPCGroup;
     public GameObject shelvesGroup;
     public GameObject registerGroup;
+
+    // For Testing Purposes
+    [Header("Testing Parameters")]
+    public bool testing = false;
+    public bool spawnInnocents = true;
+    public string NPCOption = "";
+    [SerializeField]
+    private bool spawnedNPC = false;
 
     void Awake()
     {
@@ -63,36 +69,52 @@ public class NPCSpawner : MonoBehaviour
 
             if (NPCList.Count < totalNPC)
             {
-                if (totalSpawnedGuilty < totalGuilty && Random.Range(0f, 1f) < guiltySpawnChance)
+                if (!testing)
                 {
-
-                    switch (Random.Range(0f, 3f)) // Change and add based on max types of guilty NPCs
+                    if (totalSpawnedGuilty < totalGuilty && Random.Range(0f, 1f) < guiltySpawnChance)
                     {
-                        case < 1f:
-                            targetNPCToSpawn = Careless;
-                            break;
-                        case < 2f:
-                            targetNPCToSpawn = Average;
-                            break;
-                        case < 3f:
-                            targetNPCToSpawn = Careful;
-                            break;
+
+                        switch (Random.Range(0f, 3f)) // Change and add based on max types of guilty NPCs
+                        {
+                            case < 1f:
+                                targetNPCType = "careless";
+                                break;
+                            case < 2f:
+                                targetNPCType = "scared";
+                                break;
+                            case < 3f:
+                                targetNPCType = "careful";
+                                break;
+                        }
+
+                        guiltySpawnChance = 0f;
+
                     }
-
-                    guiltySpawnChance = 0f;
-
+                    else
+                    {
+                        targetNPCType = "innocent";
+                        guiltySpawnChance += 0.01f;
+                    }
                 }
                 else
                 {
-                    targetNPCToSpawn = Innocent;
-                    guiltySpawnChance += 0.01f;
-                }
+                    if (!spawnedNPC)
+                    {
+                        targetNPCType = NPCOption.ToLower();
 
+                        spawnedNPC = true;
+                    }
+                    else if (spawnInnocents == true)
+                    {
+                        targetNPCType = "innocent";
+                    }
+                }
+                targetNPCToSpawn = NPCPrefabs[Random.Range(0, NPCPrefabs.Length - 1)];
                 Transform targetTransform = spawnpoints[Mathf.RoundToInt(Random.Range(0f, spawnpoints.Count - 1))];
                 GameObject NPC = Instantiate(targetNPCToSpawn, targetTransform.position, targetTransform.rotation);
                 NPC.transform.parent = NPCGroup.transform;
 
-                if (targetNPCToSpawn == Innocent) // Add behaviour script
+                if (targetNPCType == "innocent") // Add behaviour script
                 {
                     InnocentNPCBehaviour innocentNPCBehaviour = NPC.AddComponent<InnocentNPCBehaviour>();
 
@@ -101,15 +123,18 @@ public class NPCSpawner : MonoBehaviour
                     innocentNPCBehaviour.ShelvesPoints = shelvesPoints;
                     innocentNPCBehaviour.RegisterPoints = registerPoints;
                 }
-                else if (targetNPCToSpawn == Careless)
+                else if (targetNPCType == "careless")
                 {
 
                 }
-                else if (targetNPCToSpawn == Average)
+                else if (targetNPCType == "scared")
                 {
+                    ScaredNPCBehaviour scaredNPCBehaviour = NPC.AddComponent<ScaredNPCBehaviour>();
 
+                    scaredNPCBehaviour.ShelvesPoints = shelvesPoints;
+                    scaredNPCBehaviour.ExitPoints = spawnpoints;
                 }
-                else if (targetNPCToSpawn == Careful)
+                else if (targetNPCType == "careful")
                 {
 
                 }
