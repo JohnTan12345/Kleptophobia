@@ -17,6 +17,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
+    private Vector3 currentTargetDestination = Vector3.zero;
     private Transform register = null;
     public bool checkingOut = false;
 
@@ -48,7 +49,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
     void Start()
     {
-        browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
+        browsinglength = Random.Range(1, shelvesPoints.Count);
         StartCoroutine(ShopActivities());
     }
 
@@ -64,7 +65,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
     {
         if (browsinglength > 0) // Browsing Shelves
         {
-            int shelfnumber = Mathf.RoundToInt(Random.Range(0, shelvesPoints.Count - 1));
+            int shelfnumber = Random.Range(0, shelvesPoints.Count - 1);
 
             while (!reachedDestination) // Go To Shelves
             {
@@ -142,7 +143,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
             while (!reachedDestination)
             {
-                targetDestination = spawnpoints[Mathf.RoundToInt(Random.Range(0, spawnpoints.Count - 1))];
+                targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
                 ToDestination();
                 yield return null;
             }
@@ -157,7 +158,11 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
     private void ToDestination() // Go to destination point
     {
-        GetComponent<NavMeshAgent>().SetDestination(targetDestination.position);
+        if (targetDestination.position != currentTargetDestination)
+        {
+            currentTargetDestination = targetDestination.position;
+            GetComponent<NavMeshAgent>().SetDestination(targetDestination.position);
+        }
     }
 
     private Transform GetAvailableRegister() // Get the first available register
