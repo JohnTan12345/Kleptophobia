@@ -13,7 +13,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: hyperModatlas
-    second: {fileID: 2100000, guid: 7e881fac2a7e04c4d92ad3795e3b2c4a, type: 2}
+    second: {fileID: 2100000, guid: 0dfbcf63adccddd45ad0d0d826760dcf, type: 2}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
