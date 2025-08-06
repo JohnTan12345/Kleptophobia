@@ -112,6 +112,10 @@ public class NPCSpawner : MonoBehaviour
                 targetNPCToSpawn = NPCPrefabs[Random.Range(0, NPCPrefabs.Length - 1)];
                 Transform targetTransform = spawnpoints[Mathf.RoundToInt(Random.Range(0f, spawnpoints.Count - 1))];
                 GameObject NPC = Instantiate(targetNPCToSpawn, targetTransform.position, targetTransform.rotation);
+                if (NPC.tag != "Customer")
+                {
+                    NPC.tag = "Customer";
+                }
                 NPC.transform.parent = NPCGroup.transform;
 
                 if (targetNPCType == "innocent") // Add behaviour script
@@ -122,6 +126,7 @@ public class NPCSpawner : MonoBehaviour
                     innocentNPCBehaviour.Spawnpoints = spawnpoints;
                     innocentNPCBehaviour.ShelvesPoints = shelvesPoints;
                     innocentNPCBehaviour.RegisterPoints = registerPoints;
+                    innocentNPCBehaviour.NPCSpawner = this;
                 }
                 else if (targetNPCType == "careless")
                 {
