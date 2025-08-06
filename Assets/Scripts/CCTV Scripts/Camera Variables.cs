@@ -1,3 +1,8 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 31 July 2025
+// Description: Camera Lists for display onto monitor later
+//===========================================================================================================
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -1,3 +1,8 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 29 July 2025
+// Description: When NPCs leave the register
+//===========================================================================================================
 using UnityEngine;
 
 public class RegisterLeavingScript : MonoBehaviour

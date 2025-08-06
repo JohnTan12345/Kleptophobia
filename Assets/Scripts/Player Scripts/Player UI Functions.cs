@@ -1,3 +1,8 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 4 August 2025
+// Description: UI for stamina and others
+//===========================================================================================================
 using System.Collections;
 using StarterAssets;
 using UnityEngine;

@@ -10,17 +10,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class CarefulShoplifterBehaviour : MonoBehaviour
+public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 {
+
     private List<Transform> shelvesPoints;
     private List<Transform> registerPoints;
     private List<Transform> spawnpoints;
+    public NPCSpawner NPCSpawner;
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
-
+    private Vector3 currentTargetDestination = Vector3.zero;
     public float npcDetectionRadius = 5f;
     public LayerMask npcLayer;
+    private bool arrested = false;
+    private NavMeshAgent navMeshAgent;
+
+    public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
 
     public List<Transform> ShelvesPoints
     {
@@ -48,6 +54,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour
 
     void Start()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
         browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
         StartCoroutine(ShopActivities());
     }
@@ -111,8 +118,21 @@ public class CarefulShoplifterBehaviour : MonoBehaviour
         StartCoroutine(ShopActivities());
     }
 
-    private void ToDestination()
+    private void ToDestination() // Go to destination point
     {
-        GetComponent<NavMeshAgent>().SetDestination(targetDestination.position);
+        if (arrested) { return; }
+        if (targetDestination.position != currentTargetDestination)
+        {
+            currentTargetDestination = targetDestination.position;
+            navMeshAgent.SetDestination(targetDestination.position);
+        }
+    }
+    
+    private IEnumerator OnArrest()
+    {
+        navMeshAgent.enabled = false;
+        yield return new WaitForSeconds(2f);
+        NPCSpawner.NPCList.Remove(gameObject);
+        Destroy(gameObject);
     }
 }

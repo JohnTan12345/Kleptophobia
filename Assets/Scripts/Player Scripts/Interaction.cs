@@ -1,3 +1,8 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 7 August 2025
+// Description: Interaction Mechanics
+//===========================================================================================================
 using UnityEngine;
 
 public class Interaction : MonoBehaviour
