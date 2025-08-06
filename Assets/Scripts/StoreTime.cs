@@ -6,10 +6,11 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StoreTime : MonoBehaviour
 {
-    public Text timeText; // UI Text to display the time
+    public TMP_Text timeText; // UI Text to display the time
     public float realTimeMinuteLength = 60f; // 60 seconds = 1 in-game hour
 
     private float timer = 0f;
