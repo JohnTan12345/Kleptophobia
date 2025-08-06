@@ -6,22 +6,14 @@ public class TitleScreenUIScript : MonoBehaviour
 
 {
     private Animator animator;
-    private Button playButton;
-    private Button settingsButton;
-    private Button creditsButton;
-    private Button backButton;
-    private Button newGameButton;
-
     void Start()
     {
         animator = GetComponent<Animator>();
-        playButton = transform.Find("Play Button").GetComponent<Button>();
-        playButton.onClick.AddListener(OnPlayButtonPressed);
-        settingsButton = transform.Find("Settings Button").GetComponent<Button>();
-        creditsButton = transform.Find("Credits Button").GetComponent<Button>();
-        backButton = transform.Find("Back Button").GetComponent<Button>();
-        backButton.onClick.AddListener(OnBackButtonPressed);
-        newGameButton = transform.Find("New Game Button").GetComponent<Button>();
+        transform.Find("Play Button").GetComponent<Button>().onClick.AddListener(OnPlayButtonPressed);
+        transform.Find("Credits Button").GetComponent<Button>().onClick.AddListener(OnCreditsButtonPressed);
+        transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(OnBackButtonPressed);
+        transform.Find("Back Button (1)").GetComponent<Button>().onClick.AddListener(OnBackButtonPressed);
+        transform.Find("New Game Button").GetComponent<Button>().onClick.AddListener(OnNewGamePressed);
 
 
         StartCoroutine(TitleScreen());
@@ -48,11 +40,26 @@ public class TitleScreenUIScript : MonoBehaviour
         animator.SetTrigger("Back");
     }
 
-    // When Background is in frame
+    private void OnCreditsButtonPressed()
+    {
+        animator.SetTrigger("Credits");
+    }
+
+    private void OnNewGamePressed()
+    {
+        animator.SetTrigger("New Game");
+    }
+
+    // Events
 
     public void BackgroundInFrame()
     {
         animator.SetBool("Bg In Frame", true);
+    }
+
+    public void EnableDimmer()
+    {
+        transform.Find("Dimmer").gameObject.SetActive(true);
     }
 
 }

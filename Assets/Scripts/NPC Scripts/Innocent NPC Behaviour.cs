@@ -9,17 +9,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class InnocentNPCBehaviour : MonoBehaviour
+public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
 {
     private List<Transform> shelvesPoints;
     private List<Transform> registerPoints;
     private List<Transform> spawnpoints;
+    public NPCSpawner NPCSpawner;
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
     private Vector3 currentTargetDestination = Vector3.zero;
     private Transform register = null;
     public bool checkingOut = false;
+    private bool arrested = false;
+    private NavMeshAgent navMeshAgent;
+    
+    public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
 
     public Transform TargetDestination { get { return targetDestination; } }
 
@@ -49,6 +54,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
     void Start()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
         browsinglength = Random.Range(1, shelvesPoints.Count);
         StartCoroutine(ShopActivities());
     }
@@ -69,6 +75,7 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
             while (!reachedDestination) // Go To Shelves
             {
+                if (arrested) { yield break; }
                 targetDestination = shelvesPoints[shelfnumber];
                 ToDestination();
                 yield return null;
@@ -84,6 +91,8 @@ public class InnocentNPCBehaviour : MonoBehaviour
             bool firstInLine = false;
             while (true)
             {
+                if (arrested) { yield break; }
+
                 if (!firstInLine)
                 {
                     reachedDestination = false;
@@ -95,9 +104,11 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
                 while (!reachedDestination)
                 {
+                    if (arrested) { yield break; }
 
                     while (register == null)
                     {
+                        if (arrested) { yield break; }
                         checkingOut = true;
                         register = GetAvailableRegister();
                         yield return null;
@@ -143,6 +154,8 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
             while (!reachedDestination)
             {
+                if (arrested) { yield break; }
+
                 targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
                 ToDestination();
                 yield return null;
@@ -158,11 +171,20 @@ public class InnocentNPCBehaviour : MonoBehaviour
 
     private void ToDestination() // Go to destination point
     {
+        if (arrested) { return; }
         if (targetDestination.position != currentTargetDestination)
         {
             currentTargetDestination = targetDestination.position;
-            GetComponent<NavMeshAgent>().SetDestination(targetDestination.position);
+            navMeshAgent.SetDestination(targetDestination.position);
         }
+    }
+
+    private IEnumerator OnArrest()
+    {
+        navMeshAgent.enabled = false;
+        yield return new WaitForSeconds(2f);
+        NPCSpawner.NPCList.Remove(gameObject);
+        Destroy(gameObject);
     }
 
     private Transform GetAvailableRegister() // Get the first available register
