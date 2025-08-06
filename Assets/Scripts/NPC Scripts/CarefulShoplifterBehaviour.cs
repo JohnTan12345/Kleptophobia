@@ -14,7 +14,6 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 {
 
     private List<Transform> shelvesPoints;
-    private List<Transform> registerPoints;
     private List<Transform> spawnpoints;
     public NPCSpawner NPCSpawner;
     private bool reachedDestination = false;
@@ -25,37 +24,20 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     public LayerMask npcLayer;
     private bool arrested = false;
     private NavMeshAgent navMeshAgent;
+    private bool stoleItem = false;
+    private int points = 5;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
-
-    public List<Transform> ShelvesPoints
-    {
-        set
-        {
-            shelvesPoints = new List<Transform>(value);
-        }
-    }
-
-    public List<Transform> RegisterPoints
-    {
-        set
-        {
-            registerPoints = new List<Transform>(value);
-        }
-    }
-
-    public List<Transform> Spawnpoints
-    {
-        set
-        {
-            spawnpoints = new List<Transform>(value);
-        }
-    }
+    public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
+    public int Points {get { return points; }}
+    public List<Transform> ShelvesPoints {set { shelvesPoints = new List<Transform>(value); }}
+    public List<Transform> Spawnpoints { set { spawnpoints = new List<Transform>(value); }}
 
     void Start()
     {
+        npcLayer = LayerMask.GetMask("NPCs");
         navMeshAgent = GetComponent<NavMeshAgent>();
-        browsinglength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
+        browsinglength = Random.Range(1, shelvesPoints.Count);
         StartCoroutine(ShopActivities());
     }
 
@@ -69,9 +51,9 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator ShopActivities()
     {
-        if (browsinglength > 0) // Browsing Shelves
+        if (browsinglength > 0 && !stoleItem) // Browsing Shelves
         {
-            int shelfnumber = Mathf.RoundToInt(Random.Range(0, shelvesPoints.Count - 1));
+            int shelfnumber = Random.Range(0, shelvesPoints.Count - 1);
 
             while (!reachedDestination) // Go To Shelves
             {
@@ -87,16 +69,6 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
         }
         else // Attempt to Steal if NPCs are not around
         {
-            while (AreNPCsNearby()) // Wait until area is clear
-            {
-                yield return new WaitForSeconds(1f);
-            }
-
-            // Steal logic here
-            Debug.Log(name + " is stealing an item!");
-
-            yield return new WaitForSeconds(Random.Range(1f, 2f)); // Simulate stealing time
-
             while (!reachedDestination)
             {
                 targetDestination = spawnpoints[Mathf.RoundToInt(Random.Range(0, spawnpoints.Count - 1))];
@@ -115,6 +87,25 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private IEnumerator Idle() // For animations or waiting
     {
         yield return new WaitForSeconds(Random.Range(2f, 5f));
+        if (Random.Range(0f, 1f) < .5f)
+        {
+            StartCoroutine(ShopActivities());
+        }
+        else
+        {
+            StartCoroutine(Stealing());
+        }
+        
+    }
+
+    private IEnumerator Stealing()
+    {
+        if (AreNPCsNearby()) // Wait until there is people
+        {
+            Debug.Log(name + " is stealing an item!");
+            StoleItem = true;
+            yield return new WaitForSeconds(Random.Range(1f, 2f));
+        }
         StartCoroutine(ShopActivities());
     }
 

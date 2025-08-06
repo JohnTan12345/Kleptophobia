@@ -74,15 +74,15 @@ public class NPCSpawner : MonoBehaviour
                     if (totalSpawnedGuilty < totalGuilty && Random.Range(0f, 1f) < guiltySpawnChance)
                     {
 
-                        switch (Random.Range(0f, 3f)) // Change and add based on max types of guilty NPCs
+                        switch (Random.Range(1, 4)) // Change and add based on max types of guilty NPCs
                         {
-                            case < 1f:
+                            case 1:
                                 targetNPCType = "careless";
                                 break;
-                            case < 2f:
+                            case 2:
                                 targetNPCType = "scared";
                                 break;
-                            case < 3f:
+                            case 3:
                                 targetNPCType = "careful";
                                 break;
                         }
@@ -147,8 +147,8 @@ public class NPCSpawner : MonoBehaviour
                     CarefulShoplifterBehaviour carefulShoplifterBehaviour = NPC.AddComponent<CarefulShoplifterBehaviour>();
 
                     carefulShoplifterBehaviour.ShelvesPoints = shelvesPoints;
-                    carefulShoplifterBehaviour.RegisterPoints = registerPoints;
                     carefulShoplifterBehaviour.Spawnpoints = spawnpoints;
+                    carefulShoplifterBehaviour.NPCSpawner = this;
                 }
 
                 NPCList.Add(NPC);

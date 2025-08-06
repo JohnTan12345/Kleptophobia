@@ -23,8 +23,12 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     public bool checkingOut = false;
     private bool arrested = false;
     private NavMeshAgent navMeshAgent;
-    
+    private bool stoleItem = false;
+    private int points = -1;
+
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
+    public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
+    public int Points {get { return points; }}
 
     public Transform TargetDestination { get { return targetDestination; } }
 

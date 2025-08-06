@@ -6,4 +6,6 @@
 public interface NPCBehaviour
 {
     bool Arrested { get; set; }
+    bool StoleItem { get; set; }
+    int Points { get; }
 }
