@@ -439,7 +439,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5126527961139664767, guid: 035bf1ba97d19214580cfe6f5a29fdc3, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 55
+      value: 183
       objectReference: {fileID: 0}
     - target: {fileID: 6116018315020930700, guid: 035bf1ba97d19214580cfe6f5a29fdc3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1440,7 +1440,7 @@ MonoBehaviour:
   registerGroup: {fileID: 1263108278}
   testing: 1
   spawnInnocents: 0
-  NPCOption: careful
+  NPCOption: scared
   spawnedNPC: 0
 --- !u!114 &254344819
 MonoBehaviour:

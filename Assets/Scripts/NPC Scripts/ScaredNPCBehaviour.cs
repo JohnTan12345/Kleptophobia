@@ -19,7 +19,6 @@ public class ScaredNPCBehaviour : MonoBehaviour
     private int browsingLength;
     private bool reachedDestination = false;
     private bool isScared = false;
-    private bool isFleeing = false;
 
     private NavMeshAgent agent;
     private Rigidbody rb;
@@ -133,7 +132,6 @@ public class ScaredNPCBehaviour : MonoBehaviour
 
     private IEnumerator Flee()
     {
-        isFleeing = true;
         targetExit = GetNearestExit();
 
         if (targetExit != null)
