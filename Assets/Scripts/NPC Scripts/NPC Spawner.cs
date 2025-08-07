@@ -121,12 +121,7 @@ public class NPCSpawner : MonoBehaviour
                 if (targetNPCType == "innocent") // Add behaviour script
                 {
                     InnocentNPCBehaviour innocentNPCBehaviour = NPC.AddComponent<InnocentNPCBehaviour>();
-
-                    // Assign values
-                    innocentNPCBehaviour.Spawnpoints = spawnpoints;
-                    innocentNPCBehaviour.ShelvesPoints = shelvesPoints;
                     innocentNPCBehaviour.RegisterPoints = registerPoints;
-                    innocentNPCBehaviour.NPCSpawner = this;
                 }
                 else if (targetNPCType == "careless")
                 {
@@ -137,19 +132,17 @@ public class NPCSpawner : MonoBehaviour
                 }
                 else if (targetNPCType == "scared")
                 {
-                    ScaredNPCBehaviour scaredNPCBehaviour = NPC.AddComponent<ScaredNPCBehaviour>();
-
-                    scaredNPCBehaviour.ShelvesPoints = shelvesPoints;
-                    scaredNPCBehaviour.ExitPoints = spawnpoints;
+                    NPC.AddComponent<ScaredNPCBehaviour>();
                 }
                 else if (targetNPCType == "careful")
                 {
-                    CarefulShoplifterBehaviour carefulShoplifterBehaviour = NPC.AddComponent<CarefulShoplifterBehaviour>();
-
-                    carefulShoplifterBehaviour.ShelvesPoints = shelvesPoints;
-                    carefulShoplifterBehaviour.Spawnpoints = spawnpoints;
-                    carefulShoplifterBehaviour.NPCSpawner = this;
+                    NPC.AddComponent<CarefulShoplifterBehaviour>();
                 }
+
+                NPCBehaviour nPCBehaviour = NPC.GetComponent<NPCBehaviour>();
+                nPCBehaviour.ShelvesPoints = shelvesPoints;
+                nPCBehaviour.Spawnpoints = spawnpoints;
+                nPCBehaviour.NPCSpawner = this;
 
                 NPCList.Add(NPC);
                 DebounceScript debounce = NPC.AddComponent<DebounceScript>();

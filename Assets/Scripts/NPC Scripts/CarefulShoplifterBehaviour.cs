@@ -15,7 +15,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     private List<Transform> shelvesPoints;
     private List<Transform> spawnpoints;
-    public NPCSpawner NPCSpawner;
+    private NPCSpawner nPCSpawner;
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
@@ -32,6 +32,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     public int Points {get { return points; }}
     public List<Transform> ShelvesPoints {set { shelvesPoints = new List<Transform>(value); }}
     public List<Transform> Spawnpoints { set { spawnpoints = new List<Transform>(value); }}
+    public NPCSpawner NPCSpawner {set { nPCSpawner = value; }}
 
     void Start()
     {
@@ -123,7 +124,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     {
         navMeshAgent.enabled = false;
         yield return new WaitForSeconds(2f);
-        NPCSpawner.NPCList.Remove(gameObject);
+        nPCSpawner.NPCList.Remove(gameObject);
         Destroy(gameObject);
     }
 }

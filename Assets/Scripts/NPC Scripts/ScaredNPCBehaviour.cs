@@ -9,144 +9,130 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ScaredNPCBehaviour : MonoBehaviour
+public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
 {
     private List<Transform> shelvesPoints;
-    private List<Transform> exitPoints;
-
+    private List<Transform> spawnpoints;
+    private NPCSpawner nPCSpawner;
     private Transform targetDestination;
-    private Transform targetExit;
+    private Vector3 currentTargetDestination = Vector3.zero;
     private int browsingLength;
     private bool reachedDestination = false;
     private bool isScared = false;
+    private bool isFleeing = false;
+    private bool arrested = false;
+    private NavMeshAgent navMeshAgent;
+    private bool stoleItem = false;
+    private int points = 2;
+    private Collider[] playerNearby = new Collider[1];
+    private float playerNearbyTime;
 
-    private NavMeshAgent agent;
-    private Rigidbody rb;
-
-    private Coroutine browseRoutine;
-
-    public List<Transform> ShelvesPoints
-    {
-        set { shelvesPoints = new List<Transform>(value); }
-    }
-
-    public List<Transform> ExitPoints
-    {
-        set { exitPoints = new List<Transform>(value); }
-    }
+    public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
+    public bool StoleItem { get { return stoleItem; } set { stoleItem = value; } }
+    public int Points { get { return points; } }
+    public NPCSpawner NPCSpawner {set { nPCSpawner = value; }}
+    public List<Transform> ShelvesPoints { set { shelvesPoints = new List<Transform>(value); }}
+    public List<Transform> Spawnpoints { set { spawnpoints = new List<Transform>(value); }}
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        rb = GetComponent<Rigidbody>();
-
-        browsingLength = Mathf.RoundToInt(Random.Range(1, shelvesPoints.Count));
-        browseRoutine = StartCoroutine(BrowseShelves());
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        browsingLength = Random.Range(1, shelvesPoints.Count);
+        StartCoroutine(BrowseShelves());
     }
 
-     void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (targetDestination != null && other.gameObject == targetDestination.gameObject)
         {
             reachedDestination = true;
-        } 
-        if (other.CompareTag("Player") && !isScared)
-        {
-            GetScared();
         }
     }
 
     private IEnumerator BrowseShelves()
     {
-        while (browsingLength > 0 && !isScared)
+        if (browsingLength > 0)
         {
+            Debug.Log(browsingLength);
             int shelfIndex = Random.Range(0, shelvesPoints.Count);
             targetDestination = shelvesPoints[shelfIndex];
-            agent.SetDestination(targetDestination.position);
-            reachedDestination = false;
 
-            while (!reachedDestination && !isScared)
+            while (!reachedDestination)
             {
+                if (arrested || isFleeing) { yield break; }
+                ToDestination();
                 yield return null;
             }
 
+            reachedDestination = false;
+
             shelvesPoints.RemoveAt(shelfIndex);
             browsingLength--;
-            yield return new WaitForSeconds(Random.Range(2f, 4f));
+            if (Random.Range(0f, 1f) < 0.5f)
+            {
+                StartCoroutine(Idle());
+            }
+            else
+            {
+                StartCoroutine(Stealing());
+            }
         }
-
-        if (!isScared)
+        else
         {
-            StartCoroutine(Wander());
+            while (!reachedDestination)
+            {
+                if (arrested || isFleeing) { yield break; }
+
+                targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
+                ToDestination();
+                yield return null;
+            }
         }
     }
 
-    void Update()
-    {
-        // Flee is triggered after the jump, so no need to check here
-    }
-
-    private IEnumerator Wander()
-    {
-        while (!isScared)
-        {
-            yield return new WaitForSeconds(Random.Range(2f, 4f));
-            // Optional roaming or idle logic
-        }
-    }
-
-    public void GetScared()
+    private void GetScared()
     {
         if (!isScared)
         {
             isScared = true;
-
-            if (browseRoutine != null)
-                StopCoroutine(browseRoutine);
-
-            StartCoroutine(DelayedFear());
         }
+        navMeshAgent.speed += 2f;
+        StartCoroutine(BrowseShelves());
     }
 
-    private IEnumerator DelayedFear()
+    void Update()
     {
-        yield return new WaitForSeconds(Random.Range(0.5f, 1.5f));
-
-        JumpScare();
-
-        // Brief pause to let jump resolve
-        yield return new WaitForSeconds(0.75f);
-
-        StartCoroutine(Flee());
-
-    }
-
-    private void JumpScare()
-    {
-        if (rb != null)
+        if (isScared && !isFleeing)
         {
-            agent.isStopped = true; // Pause pathfinding temporarily
-            rb.AddForce(Vector3.up * 7f, ForceMode.Impulse); // Scared jump
+            int playerNearbyInt = Physics.OverlapSphereNonAlloc(transform.position, 6f, playerNearby, LayerMask.GetMask("Player"));
+
+            if (playerNearbyInt > 0)
+            {
+                playerNearbyTime += Time.deltaTime;
+                if (playerNearbyTime > 2f)
+                {
+                    isFleeing = true;
+                    Flee();
+                }
+            }
+            else
+            {
+                playerNearbyTime = 0;
+            }
         }
     }
 
-    private IEnumerator Flee()
+    private void Flee()
     {
-        targetExit = GetNearestExit();
+        Debug.Log("HES RUNNIN!");
+        Transform targetExit = GetNearestExit();
 
         if (targetExit != null)
         {
-            agent.isStopped = false;
-            agent.SetDestination(targetExit.position);
-
-            while (Vector3.Distance(transform.position, targetExit.position) > 1.5f)
-            {
-                yield return null;
-            }
+            targetDestination = targetExit;
+            navMeshAgent.speed = 10f;
+            ToDestination();
         }
-
-        Debug.Log($"{gameObject.name} has fled!");
-        Destroy(gameObject); // or gameObject.SetActive(false);
     }
 
     private Transform GetNearestExit()
@@ -154,7 +140,7 @@ public class ScaredNPCBehaviour : MonoBehaviour
         Transform nearest = null;
         float minDist = Mathf.Infinity;
 
-        foreach (Transform exit in exitPoints)
+        foreach (Transform exit in spawnpoints)
         {
             float dist = Vector3.Distance(transform.position, exit.position);
             if (dist < minDist)
@@ -167,10 +153,45 @@ public class ScaredNPCBehaviour : MonoBehaviour
         return nearest;
     }
 
+    private IEnumerator Idle() // Planned for animations
+    {
+        float timeIdle;
+        if (isScared)
+        {
+            timeIdle = 1f;
+        }
+        else
+        {
+            timeIdle = Random.Range(2f, 5f);
+        }
+        yield return new WaitForSeconds(timeIdle);
+        StartCoroutine(BrowseShelves());
+    }
 
+    private IEnumerator Stealing()
+    {
+        Debug.Log(name + " is stealing an item!");
+        StoleItem = true;
+        browsingLength = browsingLength > 2 ? 2 : browsingLength;
+        yield return new WaitForSeconds(Random.Range(1f, 2f));
+        GetScared();
+    }
 
+    private void ToDestination() // Go to destination point
+    {
+        if (arrested) { return; }
+        if (targetDestination.position != currentTargetDestination)
+        {
+            currentTargetDestination = targetDestination.position;
+            navMeshAgent.SetDestination(targetDestination.position);
+        }
+    }
 
-
-
-
+    private IEnumerator OnArrest()
+    {
+        navMeshAgent.enabled = false;
+        yield return new WaitForSeconds(2f);
+        nPCSpawner.NPCList.Remove(gameObject);
+        Destroy(gameObject);
+    }
 }
