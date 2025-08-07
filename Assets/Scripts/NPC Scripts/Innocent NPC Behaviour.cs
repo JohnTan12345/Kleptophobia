@@ -24,7 +24,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private bool arrested = false;
     private NavMeshAgent navMeshAgent;
     private bool stoleItem = false;
-    private int points = -1;
+    private int points = -2;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
     public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}

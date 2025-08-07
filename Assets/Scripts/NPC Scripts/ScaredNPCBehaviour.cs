@@ -124,7 +124,6 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
 
     private void Flee()
     {
-        Debug.Log("HES RUNNIN!");
         Transform targetExit = GetNearestExit();
 
         if (targetExit != null)
@@ -170,7 +169,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator Stealing()
     {
-        Debug.Log(name + " is stealing an item!");
+        Debug.Log(string.Format("Scared Shoplifter {0} stole something", gameObject));
         StoleItem = true;
         browsingLength = browsingLength > 2 ? 2 : browsingLength;
         yield return new WaitForSeconds(Random.Range(1f, 2f));

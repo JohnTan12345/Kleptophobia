@@ -93,7 +93,7 @@ public class NPCSpawner : MonoBehaviour
                     else
                     {
                         targetNPCType = "innocent";
-                        guiltySpawnChance += 0.01f;
+                        guiltySpawnChance += 0.05f;
                     }
                 }
                 else

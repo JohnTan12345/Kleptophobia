@@ -101,9 +101,9 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator Stealing()
     {
+        Debug.Log(string.Format("Careful Shoplifter {0} stole something", gameObject));
         if (AreNPCsNearby()) // Wait until there is people
         {
-            Debug.Log(name + " is stealing an item!");
             StoleItem = true;
             yield return new WaitForSeconds(Random.Range(1f, 2f));
         }

@@ -9,97 +9,120 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class CarelessShoplifterBehaviour : MonoBehaviour
+public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 {
     private List<Transform> shelvesPoints;
     private List<Transform> spawnpoints;
+    private NPCSpawner nPCSpawner;
+    private int browsingLength;
     private bool reachedDestination = false;
     private Transform targetDestination;
+    private Vector3 currentTargetDestination = Vector3.zero;
 
     [SerializeField] private Transform handSlot; // Where the item will appear in-hand
     [SerializeField] private GameObject itemPrefab; // The visual item they "shoplift"
 
-    public List<Transform> ShelvesPoints
-    {
-        set { shelvesPoints = new List<Transform>(value); }
-    }
+    private bool arrested = false;
+    private NavMeshAgent navMeshAgent;
+    private bool stoleItem = false;
+    private int points = 2;
 
-    public List<Transform> Spawnpoints
-    {
-        set { spawnpoints = new List<Transform>(value); }
-    }
+    public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
+    public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
+    public int Points {get { return points; }}
+    public List<Transform> ShelvesPoints {set { shelvesPoints = new List<Transform>(value); }}
+    public List<Transform> Spawnpoints { set { spawnpoints = new List<Transform>(value); }}
+    public NPCSpawner NPCSpawner { set { nPCSpawner = value; } }
 
     void Start()
     {
-        StartCoroutine(ShopliftRoutine());
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        browsingLength = Random.Range(1, shelvesPoints.Count);
+        StartCoroutine(BrowseShelves());
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == targetDestination?.gameObject)
+        if (other.gameObject == targetDestination.gameObject)
         {
             reachedDestination = true;
         }
     }
 
-    private IEnumerator ShopliftRoutine()
+    private IEnumerator BrowseShelves()
     {
-        // Step 1: Go to random shelf
-        int shelfIndex = Random.Range(0, shelvesPoints.Count);
-        targetDestination = shelvesPoints[shelfIndex];
-
-        while (!reachedDestination)
+        if (browsingLength > 0)
         {
-            ToDestination();
-            yield return null;
+            int shelfIndex = Random.Range(0, shelvesPoints.Count);
+            targetDestination = shelvesPoints[shelfIndex];
+
+            while (!reachedDestination)
+            {
+                if (arrested) { yield break; }
+                ToDestination();
+                yield return null;
+            }
+
+            shelvesPoints.Remove(shelvesPoints[shelfIndex]);
+            reachedDestination = false;
+            browsingLength--;
+            if (!stoleItem && Random.Range(0f, 1f) < 0.5f)
+            {
+                StartCoroutine(Stealing());
+            }
+            else
+            {
+                StartCoroutine(Idle());
+            }
+        }
+        else
+        {
+            while (!reachedDestination)
+            {
+                if (arrested) { yield break; }
+
+                targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
+                ToDestination();
+                yield return null;
+            }
         }
 
-        reachedDestination = false;
-
-        // Step 2: Wait and pick up item (visually)
-        yield return StartCoroutine(Idle());
-
-        if (itemPrefab && handSlot)
-        {
-            Instantiate(itemPrefab, handSlot.position, handSlot.rotation, handSlot);
-        }
-
-        // Step 3: Go to exit but linger near it
-        int exitIndex = Random.Range(0, spawnpoints.Count);
-        targetDestination = spawnpoints[exitIndex];
-
-        while (!reachedDestination)
-        {
-            ToDestination();
-            yield return null;
-        }
-
-        reachedDestination = false;
-
-        // Step 4: Linger/hesitate near exit
-        yield return new WaitForSeconds(Random.Range(3f, 6f));
-
-        // Optional: Move slightly or look around here (add animation triggers)
-
-        // Step 5: Leave (or despawn)
-        Destroy(gameObject); // Or trigger an exit animation
     }
 
     private IEnumerator Idle()
     {
         yield return new WaitForSeconds(Random.Range(2f, 4f));
+        StartCoroutine(BrowseShelves());
     }
 
-    private void ToDestination()
+    private IEnumerator Stealing()
     {
-        GetComponent<NavMeshAgent>().SetDestination(targetDestination.position);
+        Debug.Log(string.Format("Careless Shoplifter {0} stole something", gameObject));
+        StoleItem = true;
+        yield return new WaitForSeconds(Random.Range(1f, 2f));
+        StartCoroutine(BrowseShelves());
+
+        //if (itemPrefab && handSlot)
+        //{
+        //    Instantiate(itemPrefab, handSlot.position, handSlot.rotation, handSlot);
+        //} For use later...
+    }
+
+    private void ToDestination() // Go to destination point
+    {
+        if (arrested) { return; }
+        if (targetDestination.position != currentTargetDestination)
+        {
+            currentTargetDestination = targetDestination.position;
+            navMeshAgent.SetDestination(targetDestination.position);
+        }
+    }
+    
+    private IEnumerator OnArrest()
+    {
+        navMeshAgent.enabled = false;
+        yield return new WaitForSeconds(2f);
+        nPCSpawner.NPCList.Remove(gameObject);
+        Destroy(gameObject);
     }
 }
-
-//handSlot: Create an empty GameObject at the NPC’s hand position and assign it.
-
-// itemPrefab: Any small item prefab like a milk carton, cereal box, etc.
-
-// NavMeshAgent: Make sure the NPC has a NavMeshAgent and collider.
-
-// Spawner Script: Assign shelves and spawnpoints to this NPC like the innocent one.
