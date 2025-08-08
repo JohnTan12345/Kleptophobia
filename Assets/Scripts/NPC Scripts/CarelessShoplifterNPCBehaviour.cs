@@ -26,6 +26,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private NavMeshAgent navMeshAgent;
     private bool stoleItem = false;
     private int points = 2;
+    private float trackedTime = 0;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
     public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
@@ -46,6 +47,14 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
         if (other.gameObject == targetDestination.gameObject)
         {
             reachedDestination = true;
+        }
+    }
+
+    void Update()
+    {
+        if (stoleItem)
+        {
+            trackedTime += Time.deltaTime;
         }
     }
 
@@ -121,6 +130,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private IEnumerator OnArrest()
     {
         navMeshAgent.enabled = false;
+        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime));
         yield return new WaitForSeconds(2f);
         nPCSpawner.NPCList.Remove(gameObject);
         Destroy(gameObject);

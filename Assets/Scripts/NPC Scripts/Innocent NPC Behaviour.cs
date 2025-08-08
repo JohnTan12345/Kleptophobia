@@ -192,6 +192,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private IEnumerator OnArrest()
     {
         navMeshAgent.enabled = false;
+        PointsScript.ModifyPoints(stoleItem, points);
         yield return new WaitForSeconds(2f);
         nPCSpawner.NPCList.Remove(gameObject);
         Destroy(gameObject);

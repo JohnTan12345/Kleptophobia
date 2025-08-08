@@ -26,6 +26,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
     private int points = 2;
     private Collider[] playerNearby = new Collider[1];
     private float playerNearbyTime;
+    private float trackedTime = 0;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
     public bool StoleItem { get { return stoleItem; } set { stoleItem = value; } }
@@ -53,7 +54,6 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
     {
         if (browsingLength > 0)
         {
-            Debug.Log(browsingLength);
             int shelfIndex = Random.Range(0, shelvesPoints.Count);
             targetDestination = shelvesPoints[shelfIndex];
 
@@ -68,7 +68,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
 
             shelvesPoints.RemoveAt(shelfIndex);
             browsingLength--;
-            if (Random.Range(0f, 1f) < 0.5f)
+            if (Random.Range(0f, 1f) < 0.5f && !stoleItem)
             {
                 StartCoroutine(Idle());
             }
@@ -112,7 +112,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
                 if (playerNearbyTime > 2f)
                 {
                     isFleeing = true;
-                    Flee();
+                    StartCoroutine(Flee());
                 }
             }
             else
@@ -120,9 +120,14 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
                 playerNearbyTime = 0;
             }
         }
+
+        if (stoleItem)
+        {
+            trackedTime += Time.deltaTime;
+        }
     }
 
-    private void Flee()
+    private IEnumerator Flee()
     {
         Transform targetExit = GetNearestExit();
 
@@ -131,6 +136,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
             targetDestination = targetExit;
             navMeshAgent.speed = 10f;
             ToDestination();
+            yield return null;
         }
     }
 
@@ -189,6 +195,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
     private IEnumerator OnArrest()
     {
         navMeshAgent.enabled = false;
+        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime));
         yield return new WaitForSeconds(2f);
         nPCSpawner.NPCList.Remove(gameObject);
         Destroy(gameObject);
