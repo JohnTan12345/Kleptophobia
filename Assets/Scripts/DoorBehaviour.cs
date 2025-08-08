@@ -9,62 +9,55 @@ using UnityEngine;
 
 public class DoorBehaviour : MonoBehaviour
 {
-    public Transform door;           // door
-    public float openAngle = 90f;    // How far the door opens
-    public float openSpeed = 2f;     // Speed of door rotation
-    public bool playerNearby = false; // Whether the player is nearby to trigger door opening
+    public Transform player;       // Player reference
+    public float openAngle = 90f;  // How far to swing the door
+    public float openSpeed = 2f;   // How fast to open
+    public float triggerDistance = 3f; // Distance to trigger
 
-    private Vector3 closedRotation;  // Original rotation of the door
-    private Vector3 openRotation;    // Target rotation when door is open
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Vector3 closedRotation; // Original rotation
+    private Vector3 targetRotation; // Rotation to move towards
+    private bool isOpen = false; // State of the door
+
     void Start()
     {
-        // Save the closed rotation
-        closedRotation = door.eulerAngles;
-
-        // Calculate what the open rotation will be
-        openRotation = new Vector3(
-            closedRotation.x,
-            closedRotation.y + openAngle,
-            closedRotation.z
-        );
+        // Store the door's starting rotation in Euler angles
+        closedRotation = transform.eulerAngles;
+        targetRotation = closedRotation;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // Smoothly rotate door depending on whether player is nearby
-        if (playerNearby)
+        float distance = Vector3.Distance(player.position, transform.position);
+
+        if (distance < triggerDistance) // Player is close enough to interact
         {
-            door.eulerAngles = Vector3.Lerp(
-                door.eulerAngles,
-                openRotation,
-                Time.deltaTime * openSpeed
-            );
+            if (!isOpen)
+            {
+                // Open the door
+                targetRotation = new Vector3(
+                    closedRotation.x,
+                    closedRotation.y + openAngle,
+                    closedRotation.z
+                );
+                isOpen = true;
+            }
         }
         else
         {
-            door.eulerAngles = Vector3.Lerp(
-                door.eulerAngles,
-                closedRotation,
-                Time.deltaTime * openSpeed
-            );
+            if (isOpen)
+            {
+                // Close the door
+                targetRotation = closedRotation;
+                isOpen = false;
+            }
         }
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player")) // Check if the object entering the trigger is the player
-        {
-            playerNearby = true; // Set playerNearby to true to open the door
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player")) // Check if the object exiting the trigger is the player
-        {
-            playerNearby = false; // Set playerNearby to false to close the door
-        }
+        // Smoothly rotate towards target rotation
+        transform.eulerAngles = Vector3.Lerp(
+            transform.eulerAngles,
+            targetRotation,
+            Time.deltaTime * openSpeed
+        );
     }
 }
+
