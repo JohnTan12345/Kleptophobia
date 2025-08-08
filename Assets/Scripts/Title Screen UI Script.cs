@@ -57,6 +57,7 @@ public class TitleScreenUIScript : MonoBehaviour
 
     public void SwitchScenes()
     {
+        Debug.Log("Changing!");
         SceneManager.LoadScene(1);
     }
 
