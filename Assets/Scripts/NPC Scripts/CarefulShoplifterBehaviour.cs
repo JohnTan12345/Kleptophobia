@@ -27,6 +27,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private bool stoleItem = false;
     private int points = 5;
     private float trackedTime = 0;
+    private Collider[] customersNearby = new Collider[10];
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
     public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
@@ -77,7 +78,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
             browsinglength--;
             StartCoroutine(Idle());
         }
-        else // Attempt to Steal if NPCs are not around
+        else
         {
             while (!reachedDestination)
             {
@@ -90,14 +91,14 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     private bool AreNPCsNearby()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, npcDetectionRadius, npcLayer);
-        return hitColliders.Length > 1; // If more than 1 (self), others are nearby
+        int customersNearbyInt = Physics.OverlapSphereNonAlloc(transform.position, npcDetectionRadius, customersNearby, npcLayer);
+        return customersNearbyInt > 1; // If more than 1 (self), others are nearby
     }
 
     private IEnumerator Idle() // For animations or waiting
     {
         yield return new WaitForSeconds(Random.Range(2f, 5f));
-        if (Random.Range(0f, 1f) < .5f)
+        if (stoleItem || Random.Range(0f, 1f) < .5f)
         {
             StartCoroutine(ShopActivities());
         }

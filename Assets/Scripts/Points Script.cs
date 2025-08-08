@@ -42,4 +42,12 @@ public class PointsScript : MonoBehaviour
         points += pointChange;
         Debug.Log("Points: " + points + ", Time: " + time);
     }
+
+    public static void ResetPoints()
+    {
+        points = 0;
+        innocents = 0;
+        shoplifters = 0;
+        escaped = 0;
+    }
 }
