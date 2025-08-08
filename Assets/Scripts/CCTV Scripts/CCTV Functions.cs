@@ -1,3 +1,8 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 31 July 2025
+// Description: CCTV Movements and stuff
+//===========================================================================================================
 using System.Collections;
 using TMPro;
 using UnityEngine;

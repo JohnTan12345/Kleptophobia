@@ -1,3 +1,8 @@
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 6 August 2025
+// Description: Title Screen Functions
+//===========================================================================================================
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;

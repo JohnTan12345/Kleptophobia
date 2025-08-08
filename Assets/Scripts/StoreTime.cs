@@ -5,18 +5,23 @@
 //===========================================================================================================
 
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class StoreTime : MonoBehaviour
 {
-    public TMP_Text timeText; // UI Text to display the time
+    public Transform playerUI;
     public float realTimeMinuteLength = 60f; // 60 seconds = 1 in-game hour
 
+    private TextMeshProUGUI timeText; // UI Text to display the time   
     private float timer = 0f;
     private int gameHour = 9; // Start at 9 AM
     private int gameMinute = 0;
     private bool dayEnded = false;
+
+    void Start()
+    {
+        timeText = playerUI.Find("Time Bg").Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
+    }
 
     void Update()
     {
@@ -60,7 +65,6 @@ public class StoreTime : MonoBehaviour
 
     void EndDay()
     {
-        Debug.Log("Day ended");
-        
+        playerUI.GetComponent<PlayerUIFunctions>().OnGameEnd();
     }
 }

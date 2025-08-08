@@ -5,15 +5,17 @@ TagManager:
   serializedVersion: 3
   tags:
   - GameManager
+  - CinemachineTarget
+  - Customer
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
+  - Always On Top UI
+  - NPCs
   - 
   - 
   - 

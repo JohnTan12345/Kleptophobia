@@ -12,6 +12,11 @@ public class NPCDespawner : MonoBehaviour
         GameObject NPC = other.gameObject;
         if (!NPC.CompareTag("Player") && !NPC.GetComponent<DebounceScript>().debounce)
         {
+            if (NPC.GetComponent<NPCBehaviour>().StoleItem)
+            {
+                PointsScript.escaped++;
+                Debug.Log("Shoplifter Escaped!");
+            }
             GetComponent<NPCSpawner>().NPCList.Remove(NPC);
             Destroy(NPC);
         }

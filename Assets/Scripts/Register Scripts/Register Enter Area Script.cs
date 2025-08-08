@@ -1,4 +1,8 @@
-using System.Collections.Generic;
+//===========================================================================================================
+// Author: Tan Hong Yan John
+// Created: 29 July 2025
+// Description: Register Variables
+//===========================================================================================================
 using UnityEngine;
 
 public class RegisterEnterAreaScript : MonoBehaviour

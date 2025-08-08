@@ -14,7 +14,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private List<Transform> shelvesPoints;
     private List<Transform> registerPoints;
     private List<Transform> spawnpoints;
-    public NPCSpawner NPCSpawner;
+    private NPCSpawner nPCSpawner;
     private bool reachedDestination = false;
     private int browsinglength;
     private Transform targetDestination;
@@ -23,8 +23,13 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     public bool checkingOut = false;
     private bool arrested = false;
     private NavMeshAgent navMeshAgent;
-    
+    private bool stoleItem = false;
+    private int points = -2;
+
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
+    public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
+    public int Points {get { return points; }}
+    public NPCSpawner NPCSpawner {set { nPCSpawner = value; }}
 
     public Transform TargetDestination { get { return targetDestination; } }
 
@@ -65,6 +70,11 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
         {
             reachedDestination = true;
         }
+    }
+
+    void Update()
+    {
+
     }
 
     private IEnumerator ShopActivities()
@@ -182,8 +192,9 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private IEnumerator OnArrest()
     {
         navMeshAgent.enabled = false;
+        PointsScript.ModifyPoints(stoleItem, points);
         yield return new WaitForSeconds(2f);
-        NPCSpawner.NPCList.Remove(gameObject);
+        nPCSpawner.NPCList.Remove(gameObject);
         Destroy(gameObject);
     }
 

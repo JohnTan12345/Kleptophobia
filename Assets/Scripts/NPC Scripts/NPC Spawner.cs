@@ -74,15 +74,15 @@ public class NPCSpawner : MonoBehaviour
                     if (totalSpawnedGuilty < totalGuilty && Random.Range(0f, 1f) < guiltySpawnChance)
                     {
 
-                        switch (Random.Range(0f, 3f)) // Change and add based on max types of guilty NPCs
+                        switch (Random.Range(1, 4)) // Change and add based on max types of guilty NPCs
                         {
-                            case < 1f:
+                            case 1:
                                 targetNPCType = "careless";
                                 break;
-                            case < 2f:
+                            case 2:
                                 targetNPCType = "scared";
                                 break;
-                            case < 3f:
+                            case 3:
                                 targetNPCType = "careful";
                                 break;
                         }
@@ -93,7 +93,7 @@ public class NPCSpawner : MonoBehaviour
                     else
                     {
                         targetNPCType = "innocent";
-                        guiltySpawnChance += 0.01f;
+                        guiltySpawnChance += 0.05f;
                     }
                 }
                 else
@@ -121,12 +121,7 @@ public class NPCSpawner : MonoBehaviour
                 if (targetNPCType == "innocent") // Add behaviour script
                 {
                     InnocentNPCBehaviour innocentNPCBehaviour = NPC.AddComponent<InnocentNPCBehaviour>();
-
-                    // Assign values
-                    innocentNPCBehaviour.Spawnpoints = spawnpoints;
-                    innocentNPCBehaviour.ShelvesPoints = shelvesPoints;
                     innocentNPCBehaviour.RegisterPoints = registerPoints;
-                    innocentNPCBehaviour.NPCSpawner = this;
                 }
                 else if (targetNPCType == "careless")
                 {
@@ -137,19 +132,17 @@ public class NPCSpawner : MonoBehaviour
                 }
                 else if (targetNPCType == "scared")
                 {
-                    ScaredNPCBehaviour scaredNPCBehaviour = NPC.AddComponent<ScaredNPCBehaviour>();
-
-                    scaredNPCBehaviour.ShelvesPoints = shelvesPoints;
-                    scaredNPCBehaviour.ExitPoints = spawnpoints;
+                    NPC.AddComponent<ScaredNPCBehaviour>();
                 }
                 else if (targetNPCType == "careful")
                 {
-                    CarefulShoplifterBehaviour carefulShoplifterBehaviour = NPC.AddComponent<CarefulShoplifterBehaviour>();
-
-                    carefulShoplifterBehaviour.ShelvesPoints = shelvesPoints;
-                    carefulShoplifterBehaviour.RegisterPoints = registerPoints;
-                    carefulShoplifterBehaviour.Spawnpoints = spawnpoints;
+                    NPC.AddComponent<CarefulShoplifterBehaviour>();
                 }
+
+                NPCBehaviour nPCBehaviour = NPC.GetComponent<NPCBehaviour>();
+                nPCBehaviour.ShelvesPoints = shelvesPoints;
+                nPCBehaviour.Spawnpoints = spawnpoints;
+                nPCBehaviour.NPCSpawner = this;
 
                 NPCList.Add(NPC);
                 DebounceScript debounce = NPC.AddComponent<DebounceScript>();
