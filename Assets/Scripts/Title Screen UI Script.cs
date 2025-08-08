@@ -5,6 +5,7 @@
 //===========================================================================================================
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TitleScreenUIScript : MonoBehaviour
@@ -19,19 +20,11 @@ public class TitleScreenUIScript : MonoBehaviour
         transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(OnBackButtonPressed);
         transform.Find("Back Button (1)").GetComponent<Button>().onClick.AddListener(OnBackButtonPressed);
         transform.Find("New Game Button").GetComponent<Button>().onClick.AddListener(OnNewGamePressed);
-
-
-        StartCoroutine(TitleScreen());
     }
 
-    private IEnumerator TitleScreen()
+    public void TitleScreen()
     {
-
-        // Group name intro
-        yield return new WaitForSeconds(2);
-        // Pan Down
-
-        // Move Stuff
+        transform.Find("Dimmer").gameObject.SetActive(false);
         animator.SetTrigger("Start");
     }
 
@@ -62,9 +55,9 @@ public class TitleScreenUIScript : MonoBehaviour
         animator.SetBool("Bg In Frame", true);
     }
 
-    public void EnableDimmer()
+    public void SwitchScenes()
     {
-        transform.Find("Dimmer").gameObject.SetActive(true);
+        SceneManager.LoadScene(1);
     }
 
 }
