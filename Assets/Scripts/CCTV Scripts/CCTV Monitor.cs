@@ -42,6 +42,8 @@ public class CCTVMonitor : MonoBehaviour
         transform.Find("Canvas").Find("Prev").GetComponent<Button>().onClick.AddListener(PrevCamera);
         transform.Find("Canvas").Find("Next").GetComponent<Button>().onClick.AddListener(NextCamera);
 
+        canvas.GetComponent<Canvas>().worldCamera = Camera.main;
+
         // Get Monitor Screen's Mesh Renderer
         meshRenderer = GetComponent<MeshRenderer>();
 

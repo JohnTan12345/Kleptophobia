@@ -7,6 +7,8 @@ TagManager:
   - GameManager
   - CinemachineTarget
   - Customer
+  - Interactable
+  - Monitor
   layers:
   - Default
   - TransparentFX

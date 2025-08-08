@@ -13,23 +13,28 @@ public class Interaction : MonoBehaviour
     private GameObject onScreen;
     private GameObject arrestUIGameObject;
     private NPCArrestUI arrestUI;
+    private Transform idealCameraPosition;
 
     void Update()
     {
         if (Physics.Raycast(raySpawner.position, raySpawner.forward, out raycastHit, maxRange))
         {
             GameObject hitObject = raycastHit.collider.gameObject;
+            Debug.Log(hitObject.name);
             if (hitObject != onScreen)
             {
                 ResetVariables();
                 onScreen = hitObject;
 
-                try
+                if (hitObject.transform.Find("Canvas").TryGetComponent<NPCArrestUI>(out arrestUI))
                 {
                     arrestUIGameObject = hitObject.transform.Find("Canvas").gameObject;
-                    arrestUI = arrestUIGameObject.GetComponent<NPCArrestUI>();
                     arrestUIGameObject.SetActive(true);
-                } catch {}
+                }
+                else if (hitObject.CompareTag("Monitor"))
+                {
+                    idealCameraPosition = hitObject.transform.parent.Find("Camera Position");
+                }
             }
         }
         else
