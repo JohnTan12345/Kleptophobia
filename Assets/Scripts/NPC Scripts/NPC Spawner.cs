@@ -43,17 +43,19 @@ public class NPCSpawner : MonoBehaviour
 
     void Awake()
     {
+        // Add all points into the list
         foreach (Transform spawnpoint in transform)
         {
             spawnpoints.Add(spawnpoint);
-        };
+        }
+        ;
 
-        foreach (Transform shelf in shelvesGroup.transform)
+        foreach (Transform shelf in shelvesGroup.transform) // May change to tag based
         {
             shelvesPoints.Add(shelf.Find("Destination"));
         };
 
-        foreach (Transform register in registerGroup.transform)
+        foreach (Transform register in registerGroup.transform) // May change to tag based
         {
             registerPoints.Add(register.Find("Destination"));
         };
@@ -109,6 +111,8 @@ public class NPCSpawner : MonoBehaviour
                         targetNPCType = "innocent";
                     }
                 }
+
+                // Spawn NPC
                 targetNPCToSpawn = NPCPrefabs[Random.Range(0, NPCPrefabs.Length - 1)];
                 Transform targetTransform = spawnpoints[Mathf.RoundToInt(Random.Range(0f, spawnpoints.Count - 1))];
                 GameObject NPC = Instantiate(targetNPCToSpawn, targetTransform.position, targetTransform.rotation);
@@ -125,10 +129,7 @@ public class NPCSpawner : MonoBehaviour
                 }
                 else if (targetNPCType == "careless")
                 {
-                    CarelessShoplifterBehaviour carelessShoplifterBehaviour = NPC.AddComponent<CarelessShoplifterBehaviour>();
-
-                    carelessShoplifterBehaviour.ShelvesPoints = shelvesPoints;
-                    carelessShoplifterBehaviour.Spawnpoints = spawnpoints;
+                    NPC.AddComponent<CarelessShoplifterBehaviour>();
                 }
                 else if (targetNPCType == "scared")
                 {
@@ -139,13 +140,13 @@ public class NPCSpawner : MonoBehaviour
                     NPC.AddComponent<CarefulShoplifterBehaviour>();
                 }
 
-                NPCBehaviour nPCBehaviour = NPC.GetComponent<NPCBehaviour>();
+                NPCBehaviour nPCBehaviour = NPC.GetComponent<NPCBehaviour>(); // Get behaviour script
                 nPCBehaviour.ShelvesPoints = shelvesPoints;
                 nPCBehaviour.Spawnpoints = spawnpoints;
                 nPCBehaviour.NPCSpawner = this;
 
                 NPCList.Add(NPC);
-                DebounceScript debounce = NPC.AddComponent<DebounceScript>();
+                DebounceScript debounce = NPC.AddComponent<DebounceScript>(); // Add in a "recently spawned" check that disables itself after a certain time
                 NPC.name = totalNPCSpawned++ + NPC.name;
                 debounce.Debounce(2f);
             }

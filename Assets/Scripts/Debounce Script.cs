@@ -16,7 +16,7 @@ public class DebounceScript : MonoBehaviour
         StartCoroutine(SetDebounce(time));
     }
 
-    private IEnumerator SetDebounce(float time)
+    private IEnumerator SetDebounce(float time) // Wait for a while before NPC can be despawned
     {
         yield return new WaitForSecondsRealtime(time);
         debounce = false;

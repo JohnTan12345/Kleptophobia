@@ -18,25 +18,25 @@ public class CameraVariables : MonoBehaviour
 
     void Start()
     {
-        foreach (Transform camera in transform)
+        foreach (Transform camera in transform) // Get all cameras in the camera grp
         {
-            cameras.Add(cameras.Count, camera);
+            cameras.Add(cameras.Count, camera); // Add to camera list
         }
 
         for (int i = 0; i < cameras.Keys.Count; i++)
         {
             int key = cameras.Keys[i];
-            CreateRenderTexture(key);
+            CreateRenderTexture(key); // Create render texture for the camera
         }
 
-        initialized = true;
+        initialized = true; // For other scripts to get the values when its ready
     }
 
     public void CreateRenderTexture(int key)
     {
         RenderTexture renderTexture = new RenderTexture(1980, 1080, 16);
         renderTexture.Create();
-        cameras[key].Find("Camera").GetComponent<Camera>().targetTexture = renderTexture;
-        cameraFeedRenderTexture[key] = renderTexture;
+        cameras[key].Find("Camera").GetComponent<Camera>().targetTexture = renderTexture; // Set whatever the camera is rendering to a texture
+        cameraFeedRenderTexture[key] = renderTexture; // Assign the render texture to that camera in the list
     }
 }

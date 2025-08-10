@@ -22,20 +22,20 @@ public class CCTVFunctions : MonoBehaviour
 
     public void OnButtonPress()
     {
-        autoRotate = !autoRotate;
+        autoRotate = !autoRotate; // Start/Stop the camera from rotating automatically
 
         if (autoRotate)
         {
-            autoRotateText.text = "II";
+            autoRotateText.text = "II"; // Change indication
             StartCoroutine(AutoRotate());
         }
         else
         {
-            autoRotateText.text = ">";
+            autoRotateText.text = ">"; // Change indication
         }
     }
 
-    public void OnValueChanged(float value)
+    public void OnValueChanged(float value) // Change the camera rotation and where the scroll bar value should be
     {
 
         if (scrollbar != null)
@@ -44,22 +44,22 @@ public class CCTVFunctions : MonoBehaviour
         }
 
         float newRotation = value * maxRotationDegrees * 2 - maxRotationDegrees;
-        transform.Rotate(0, newRotation - currentRotation, 0, Space.World);
+        transform.Rotate(0, newRotation - currentRotation, 0, Space.World); // Rotate in the world axis
         currentRotation = newRotation;
     }
 
     private IEnumerator AutoRotate()
     {
-        if (scrollBarValue > .5)
+        if (scrollBarValue > .5) // Rotate right if the starting scroll bar value is more than 50%
         {
             moveLeft = false;
         }
-        else
+        else // Rotate left if the starting scroll bar value is less or equal to 50%
         {
             moveLeft = true;
         }
 
-        while (autoRotate)
+        while (autoRotate) // Auto rotation
         {
             if (moveLeft)
             {
@@ -67,7 +67,7 @@ public class CCTVFunctions : MonoBehaviour
                 currentRotation -= changeInRotation * Time.deltaTime;
                 if (currentRotation < -maxRotationDegrees)
                 {
-                    yield return new WaitForSecondsRealtime(3f);
+                    yield return new WaitForSecondsRealtime(3f); // Pause the camera from rotating once it reaches the far left
                     moveLeft = false;
                 }
             }
@@ -77,18 +77,18 @@ public class CCTVFunctions : MonoBehaviour
                 currentRotation += changeInRotation * Time.deltaTime;
                 if (currentRotation > maxRotationDegrees)
                 {
-                    yield return new WaitForSecondsRealtime(3f);
+                    yield return new WaitForSecondsRealtime(3f); // Pause the camera from rotating once it reaches the far right
                     moveLeft = true;
                 }
             }
-            scrollBarValue = (currentRotation + maxRotationDegrees) / (2 * maxRotationDegrees);
+            scrollBarValue = (currentRotation + maxRotationDegrees) / (2 * maxRotationDegrees); // Scroll bar value at the point where the camera rotated to
             
             if (scrollbar != null)
             {
                 scrollbar.value = scrollBarValue;
             }
 
-            OnValueChanged(scrollBarValue);
+            OnValueChanged(scrollBarValue); // To run the method since for some reason it does not run automatically when edited here
             yield return null;
         }
     }

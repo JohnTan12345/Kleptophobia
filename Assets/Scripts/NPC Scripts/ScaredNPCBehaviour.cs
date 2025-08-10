@@ -96,7 +96,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
         {
             isScared = true;
         }
-        navMeshAgent.speed += 2f;
+        navMeshAgent.speed += 2f; // Increase speed since its scared
         StartCoroutine(BrowseShelves());
     }
 
@@ -134,13 +134,13 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
         if (targetExit != null)
         {
             targetDestination = targetExit;
-            navMeshAgent.speed = 10f;
+            navMeshAgent.speed = 10f; // RUN AWAY
             ToDestination();
             yield return null;
         }
     }
 
-    private Transform GetNearestExit()
+    private Transform GetNearestExit() // Find nearest exit
     {
         Transform nearest = null;
         float minDist = Mathf.Infinity;
@@ -177,7 +177,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
     {
         Debug.Log(string.Format("Scared Shoplifter {0} stole something", gameObject));
         StoleItem = true;
-        browsingLength = browsingLength > 2 ? 2 : browsingLength;
+        browsingLength = browsingLength > 2 ? 2 : browsingLength; // Reduce the browsing length to 2 or less since its scared
         yield return new WaitForSeconds(Random.Range(1f, 2f));
         GetScared();
     }
@@ -185,7 +185,7 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
     private void ToDestination() // Go to destination point
     {
         if (arrested) { return; }
-        if (targetDestination.position != currentTargetDestination)
+        if (targetDestination.position != currentTargetDestination) // Check if the new destination point is actually new
         {
             currentTargetDestination = targetDestination.position;
             navMeshAgent.SetDestination(targetDestination.position);
@@ -194,10 +194,10 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator OnArrest()
     {
-        navMeshAgent.enabled = false;
-        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime));
+        navMeshAgent.enabled = false; // Stop the NPC completely
+        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime)); // Add or remove points
         yield return new WaitForSeconds(2f);
-        nPCSpawner.NPCList.Remove(gameObject);
+        nPCSpawner.NPCList.Remove(gameObject); // To allow new NPCs to spawn
         Destroy(gameObject);
     }
 }

@@ -70,17 +70,17 @@ public class Interaction : MonoBehaviour
         {
             ExitCameras();
         }
-        else if (onScreen != null && !usingCams && onScreen.CompareTag("Monitor"))
+        else if (onScreen != null && !usingCams && onScreen.CompareTag("Monitor")) // If player is not using cams and is looking at the monitor
         {
             UseCameras();
         }
         else if (arrestUI != null && !arrestUI.Arrested)
         {
-            arrestUI.Arrested = true;
+            arrestUI.Arrested = true; // Set the Arrested variable in the NPC to true
         }
     }
 
-    private void ResetVariables()
+    private void ResetVariables() // Reset when player is looking at nothing
     {
         if (arrestUIGameObject != null)
         {
@@ -94,18 +94,21 @@ public class Interaction : MonoBehaviour
 
     private void UseCameras()
     {
+        // Save camera location before moving
         cameraParent = playerCamera.transform.parent;
         cameraPosition = playerCamera.transform.position;
         cameraRotation = playerCamera.transform.rotation;
 
         SwitchPlayerStates(false);
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None; // Force the cursor to unlock itself
+        Cursor.visible = true; // Make the cursor visible
 
+        // Make the player UI disappear
         playerUI.alpha = 0f;
         playerUI.interactable = false;
         playerUI.blocksRaycasts = false;
 
+        // Move the camera to the front of the monitors
         playerCamera.transform.parent = null;
         playerCamera.transform.position = idealCameraPosition.position;
         playerCamera.transform.rotation = idealCameraPosition.rotation;
@@ -113,14 +116,16 @@ public class Interaction : MonoBehaviour
 
     private void ExitCameras()
     {
+        // Move the camera back to player
         playerCamera.transform.position = cameraPosition;
         playerCamera.transform.rotation = cameraRotation;
         playerCamera.transform.parent = cameraParent;
 
         SwitchPlayerStates(true);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked; // Force the cursor to lock itself
+        Cursor.visible = false; // Make the cursor invisible
 
+        // Make the player UI appear
         playerUI.alpha = 1f;
         playerUI.interactable = true;
         playerUI.blocksRaycasts = true;
@@ -128,10 +133,10 @@ public class Interaction : MonoBehaviour
 
     private void SwitchPlayerStates(bool state)
     {
-        playerFollowCamera.gameObject.SetActive(state);
-        firstPersonController.enabled = state;
-        starterAssetsInputs.cursorInputForLook = state;
-        starterAssetsInputs.cursorLocked = state;
+        playerFollowCamera.gameObject.SetActive(state); // To allow the player camera to move
+        firstPersonController.enabled = state; // Stop all movement
+        starterAssetsInputs.cursorInputForLook = state; // Stop the player from looking around
+        starterAssetsInputs.cursorLocked = state; // Frees the mouse
 
         usingCams = !state;
     }

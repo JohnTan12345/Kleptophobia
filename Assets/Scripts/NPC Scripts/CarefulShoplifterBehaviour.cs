@@ -1,7 +1,7 @@
 //===========================================================================================================
 // Author: Foong Mun Yip Xander
 // Created: 1 August 2025
-// Description: Careful Shoplifter NPC behaviour
+// Description: Careful Shoplifter NPC behaviour. Intended Behaviour: steal something and leave immediately
 //===========================================================================================================
 
 
@@ -38,7 +38,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     void Start()
     {
-        npcLayer = LayerMask.GetMask("NPCs");
+        npcLayer = LayerMask.GetMask("NPCs"); // for use to check for only NPCs later
         navMeshAgent = GetComponent<NavMeshAgent>();
         browsinglength = Random.Range(1, shelvesPoints.Count);
         StartCoroutine(ShopActivities());
@@ -54,7 +54,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     void Update()
     {
-        if (stoleItem)
+        if (stoleItem) // Start timer after NPC steals item
         {
             trackedTime += Time.deltaTime;
         }
@@ -62,7 +62,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator ShopActivities()
     {
-        if (browsinglength > 0 && !stoleItem) // Browsing Shelves
+        if (browsinglength > 0 && !stoleItem) // Browsing Shelves and checking if he actually stole an item
         {
             int shelfnumber = Random.Range(0, shelvesPoints.Count - 1);
 
@@ -73,14 +73,14 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
                 yield return null;
             }
 
-            shelvesPoints.Remove(shelvesPoints[shelfnumber]);
+            shelvesPoints.Remove(shelvesPoints[shelfnumber]); // Remove shelf from list after reaching
             reachedDestination = false;
             browsinglength--;
             StartCoroutine(Idle());
         }
         else
         {
-            while (!reachedDestination)
+            while (!reachedDestination) // Go home
             {
                 targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
                 ToDestination();
@@ -89,16 +89,16 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
         }
     }
 
-    private bool AreNPCsNearby()
+    private bool AreNPCsNearby() // Check if there are any NPCs
     {
         int customersNearbyInt = Physics.OverlapSphereNonAlloc(transform.position, npcDetectionRadius, customersNearby, npcLayer);
         return customersNearbyInt > 1; // If more than 1 (self), others are nearby
     }
 
-    private IEnumerator Idle() // For animations or waiting
+    private IEnumerator Idle() // Doing absolutely nothing but stand around there
     {
         yield return new WaitForSeconds(Random.Range(2f, 5f));
-        if (stoleItem || Random.Range(0f, 1f) < .5f)
+        if (stoleItem || Random.Range(0f, 1f) < .5f) // Check if he already stole an item
         {
             StartCoroutine(ShopActivities());
         }
@@ -112,7 +112,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private IEnumerator Stealing()
     {
         Debug.Log(string.Format("Careful Shoplifter {0} stole something", gameObject));
-        if (AreNPCsNearby()) // Wait until there is people
+        if (AreNPCsNearby()) // If there are people when its stealing
         {
             StoleItem = true;
             yield return new WaitForSeconds(Random.Range(1f, 2f));
@@ -123,7 +123,7 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private void ToDestination() // Go to destination point
     {
         if (arrested) { return; }
-        if (targetDestination.position != currentTargetDestination)
+        if (targetDestination.position != currentTargetDestination) // Check if the new destination point is actually new
         {
             currentTargetDestination = targetDestination.position;
             navMeshAgent.SetDestination(targetDestination.position);
@@ -132,10 +132,10 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     
     private IEnumerator OnArrest()
     {
-        navMeshAgent.enabled = false;
-        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime));
+        navMeshAgent.enabled = false; // Stop the NPC completely
+        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime)); // Add or remove points
         yield return new WaitForSeconds(2f);
-        nPCSpawner.NPCList.Remove(gameObject);
+        nPCSpawner.NPCList.Remove(gameObject); // To allow new NPCs to spawn
         Destroy(gameObject);
     }
 }

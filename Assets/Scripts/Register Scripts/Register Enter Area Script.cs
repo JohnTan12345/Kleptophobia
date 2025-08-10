@@ -16,16 +16,12 @@ public class RegisterEnterAreaScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //try // Try to get the Innocent NPC Behaviour component
+
+        InnocentNPCBehaviour innocentNPC = other.GetComponent<InnocentNPCBehaviour>(); // Check if the NPC is innocent
+        if (!registerVariables.CustomersInLine.ContainsValue(other.gameObject) && innocentNPC.checkingOut && innocentNPC.TargetDestination == transform)
         {
-            InnocentNPCBehaviour innocentNPC = other.GetComponent<InnocentNPCBehaviour>();
-            if (!registerVariables.CustomersInLine.ContainsValue(other.gameObject) && innocentNPC.checkingOut && innocentNPC.TargetDestination == transform)
-            {
-                registerVariables.CustomersInLine.Add(registerVariables.CustomersInLine.Count, other.gameObject);
-                registerVariables.CheckCustomerLine();
-            }
+            registerVariables.CustomersInLine.Add(registerVariables.CustomersInLine.Count, other.gameObject);
+            registerVariables.CheckCustomerLine();
         }
-        //catch { }
-        ; // Do nothing if no such component
     }
 }

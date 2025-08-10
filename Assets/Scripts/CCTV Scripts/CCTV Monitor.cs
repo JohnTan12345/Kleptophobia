@@ -62,26 +62,26 @@ public class CCTVMonitor : MonoBehaviour
             cameraVariables.CreateRenderTexture(cameraNumber);
         }
 
-        meshRenderer.material.SetTexture("_BaseMap", cameraFeedRenderTexture[cameraNumber]);
+        meshRenderer.material.SetTexture("_BaseMap", cameraFeedRenderTexture[cameraNumber]); // Show the camera feed for the camera
     }
 
 // Change Camera Functions
 
-    private void NextCamera()
+    private void NextCamera() // Next camera
     {
         bool foundNewCamera = false;
         int NewCamera = cameraNumber;
 
-        while (!foundNewCamera)
+        while (!foundNewCamera) // Cycle through every camera in the list until theres an available camera.
         {
             NewCamera++;
 
-            if (NewCamera > cameras.Count - 1)
+            if (NewCamera > cameras.Count - 1) // When it reaches the last camera
             {
                 NewCamera = 0;
             }
 
-            if (!UsedCameras.Contains(NewCamera))
+            if (!UsedCameras.Contains(NewCamera)) // When theres an available camera
             {
                 StartCoroutine(ChangeCameraNumber(NewCamera));
                 foundNewCamera = true;
@@ -89,23 +89,21 @@ public class CCTVMonitor : MonoBehaviour
         }
     }
 
-    private void PrevCamera()
+    private void PrevCamera() // Last camera
     {
         bool foundNewCamera = false;
         int NewCamera = cameraNumber;
 
-        while (!foundNewCamera)
+        while (!foundNewCamera) // Cycle through every camera in the list until theres an available camera.
         {
             NewCamera--;
 
-            if (NewCamera < 0)
+            if (NewCamera < 0) // When it reaches the first camera
             {
-                NewCamera = cameras.Count - 1;
+                NewCamera = cameras.Count - 1; 
             }
 
-            Debug.Log(!UsedCameras.Contains(NewCamera));
-
-            if (!UsedCameras.Contains(NewCamera))
+            if (!UsedCameras.Contains(NewCamera)) // When theres an available camera
             {
                 StartCoroutine(ChangeCameraNumber(NewCamera));
                 foundNewCamera = true;
@@ -115,18 +113,18 @@ public class CCTVMonitor : MonoBehaviour
 
     private IEnumerator ChangeCameraNumber(int newCamera)
     {
-        while (!cameraVariables.Initialized)
+        while (!cameraVariables.Initialized) // Check if the camera list is ready
         {
             yield return null;
         }
 
-        if (cameraFeedRenderTexture == null || cameras == null)
+        if (cameraFeedRenderTexture == null || cameras == null) // If for some reason there is no render texture
         {
             cameraFeedRenderTexture = cameraVariables.CameraFeedRenderTexture;
             cameras = cameraVariables.Cameras;
         }
 
-        if (CCTVFunctions != null)
+        if (CCTVFunctions != null) // Detach from the previous camera if applicable
         {
             CCTVFunctions.scrollbar = null;
             CCTVFunctions.autoRotateText = null;
@@ -146,7 +144,7 @@ public class CCTVMonitor : MonoBehaviour
         autoRotateButton.onClick.AddListener(CCTVFunctions.OnButtonPress);
         cameraName.text = string.Format("{0}: {1}",newCamera ,cameras[newCamera].name);
 
-        if (CCTVFunctions.autoRotate)
+        if (CCTVFunctions.autoRotate) // Check if the camera is already rotating
         {
             autoRotateText.text = "II";
         }

@@ -16,26 +16,22 @@ public class RegisterLeavingScript : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        //try // Find innocent NPC behaviour component
-        {
-            InnocentNPCBehaviour innocentNPC = other.gameObject.GetComponent<InnocentNPCBehaviour>();
+        InnocentNPCBehaviour innocentNPC = other.gameObject.GetComponent<InnocentNPCBehaviour>();
 
-            if (registerVariables.CustomersInLine.ContainsValue(other.gameObject) && !innocentNPC.checkingOut)
+        if (registerVariables.CustomersInLine.ContainsValue(other.gameObject) && !innocentNPC.checkingOut) // Check if NPC is in line and is leaving
+        {
+            for (int i = 0; i < registerVariables.CustomersInLine.Count; i++)
             {
-                for (int i = 0; i < registerVariables.CustomersInLine.Count; i++)
+                if (registerVariables.CustomersInLine.ContainsKey(i + 1))
                 {
-                    if (registerVariables.CustomersInLine.ContainsKey(i + 1))
-                    {
-                        registerVariables.CustomersInLine[i] = registerVariables.CustomersInLine[i + 1];
-                    }
-                    else
-                    {
-                        registerVariables.CustomersInLine.Remove(i);
-                    }
+                    registerVariables.CustomersInLine[i] = registerVariables.CustomersInLine[i + 1]; // Move all NPCs forward in line
                 }
-                registerVariables.CheckCustomerLine();
+                else
+                {
+                    registerVariables.CustomersInLine.Remove(i); // Remove the leaving NPC
+                }
             }
+            registerVariables.CheckCustomerLine();
         }
-        //catch {}; // Do nothing if component not found
     }
 }

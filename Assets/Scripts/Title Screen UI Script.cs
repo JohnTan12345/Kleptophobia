@@ -25,27 +25,27 @@ public class TitleScreenUIScript : MonoBehaviour
     public void TitleScreen()
     {
         transform.Find("Dimmer").gameObject.SetActive(false);
-        animator.SetTrigger("Start");
+        animator.SetTrigger("Start"); // Load the main title screen
     }
 
     private void OnPlayButtonPressed()
     {
-        animator.SetTrigger("Play");
+        animator.SetTrigger("Play"); // Play new game
     }
 
     private void OnBackButtonPressed()
     {
-        animator.SetTrigger("Back");
+        animator.SetTrigger("Back"); // Go back
     }
 
     private void OnCreditsButtonPressed()
     {
-        animator.SetTrigger("Credits");
+        animator.SetTrigger("Credits"); // Go to credits
     }
 
     private void OnNewGamePressed()
     {
-        animator.SetTrigger("New Game");
+        animator.SetTrigger("New Game"); // Start new game
     }
 
     // Events
@@ -58,7 +58,7 @@ public class TitleScreenUIScript : MonoBehaviour
     public void SwitchScenes()
     {
         Debug.Log("Changing!");
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(1); // Start the game
     }
 
 }
