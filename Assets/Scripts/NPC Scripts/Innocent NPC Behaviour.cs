@@ -72,11 +72,6 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
         }
     }
 
-    void Update()
-    {
-
-    }
-
     private IEnumerator ShopActivities()
     {
         if (browsinglength > 0) // Browsing Shelves
@@ -103,7 +98,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
             {
                 if (arrested) { yield break; }
 
-                if (!firstInLine)
+                if (!firstInLine) // If customer is not the first in line
                 {
                     reachedDestination = false;
                 }
@@ -116,10 +111,10 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
                 {
                     if (arrested) { yield break; }
 
-                    while (register == null)
+                    while (register == null) // If there is no register for the NPC to go to
                     {
                         if (arrested) { yield break; }
-                        checkingOut = true;
+                        checkingOut = true; // Put here so it does not get resetted to true
                         register = GetAvailableRegister();
                         yield return null;
                     }
@@ -131,7 +126,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
 
                         if (!registerVariables.CustomersInLine.ContainsValue(gameObject))
                         {
-                            if (registerVariables.CustomersInLine.Count > 4)
+                            if (registerVariables.CustomersInLine.Count > 4) // Check if register is full
                             {
                                 register = null;
                                 continue;
@@ -140,7 +135,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
                         }
                         else
                         {
-                            int i = registerVariables.CustomersInLine.Keys[registerVariables.CustomersInLine.IndexOfValue(gameObject)];
+                            int i = registerVariables.CustomersInLine.Keys[registerVariables.CustomersInLine.IndexOfValue(gameObject)]; // Get where the customer is standing in line
 
                             if (i != 0)
                             {
@@ -150,7 +145,6 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
                             {
                                 targetDestination = register.Find("Destination");
                                 firstInLine = true;
-
                             }
                         }
                     }
@@ -158,6 +152,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
                     yield return null;
                 }
             }
+            // To add VFX for paying later
             checkingOut = false;
             reachedDestination = false;
             yield return StartCoroutine(Idle());
@@ -173,7 +168,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
         }
     }
 
-    private IEnumerator Idle() // Planned for animations
+    private IEnumerator Idle() // Doing absolutely nothing but stand around there
     {
         yield return new WaitForSeconds(Random.Range(2f, 5f));
         StartCoroutine(ShopActivities());
@@ -191,10 +186,10 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator OnArrest()
     {
-        navMeshAgent.enabled = false;
-        PointsScript.ModifyPoints(stoleItem, points);
+        navMeshAgent.enabled = false; // Stop the NPC completely
+        PointsScript.ModifyPoints(stoleItem, points); // Add or remove points
         yield return new WaitForSeconds(2f);
-        nPCSpawner.NPCList.Remove(gameObject);
+        nPCSpawner.NPCList.Remove(gameObject); // To allow new NPCs to spawn
         Destroy(gameObject);
     }
 
@@ -212,11 +207,11 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
 
             if (registerVariables.available)
             {
-                availableRegister = register;
+                availableRegister = register; // Set as the register thats available
             }
             else
             {
-                if (registerVariables.CustomersInLine.Count < shortestLineAmount)
+                if (registerVariables.CustomersInLine.Count < shortestLineAmount) // Find the shortest line
                 {
                     shortestLineAmount = registerVariables.CustomersInLine.Count;
                     shortestLineRegister = register;
@@ -224,7 +219,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
             }
         }
 
-        if (availableRegister == null)
+        if (availableRegister == null) // Go to the shortest line if theres no free register
         {
             availableRegister = shortestLineRegister;
         }

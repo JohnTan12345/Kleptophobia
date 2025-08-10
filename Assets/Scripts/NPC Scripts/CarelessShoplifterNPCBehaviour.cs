@@ -1,7 +1,7 @@
 //===========================================================================================================
 // Author: Lucas Tan
 // Created: 1 August 2025
-// Description: Careless shoplifter NPC behaviour
+// Description: Careless shoplifter NPC behaviour. Intended behaviour: act like a normal customer but with the chance to steal
 //===========================================================================================================
 
 using System.Collections;
@@ -52,7 +52,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     void Update()
     {
-        if (stoleItem)
+        if (stoleItem) // Start timer after NPC steals item
         {
             trackedTime += Time.deltaTime;
         }
@@ -60,7 +60,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator BrowseShelves()
     {
-        if (browsingLength > 0)
+        if (browsingLength > 0) // Browsing Shelves
         {
             int shelfIndex = Random.Range(0, shelvesPoints.Count);
             targetDestination = shelvesPoints[shelfIndex];
@@ -72,10 +72,10 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
                 yield return null;
             }
 
-            shelvesPoints.Remove(shelvesPoints[shelfIndex]);
+            shelvesPoints.Remove(shelvesPoints[shelfIndex]); // Remove shelf from list after reaching
             reachedDestination = false;
             browsingLength--;
-            if (!stoleItem && Random.Range(0f, 1f) < 0.5f)
+            if (!stoleItem && Random.Range(0f, 1f) < 0.5f) // Check if he already stole an item
             {
                 StartCoroutine(Stealing());
             }
@@ -86,7 +86,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
         }
         else
         {
-            while (!reachedDestination)
+            while (!reachedDestination) // Go home
             {
                 if (arrested) { yield break; }
 
@@ -98,7 +98,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     }
 
-    private IEnumerator Idle()
+    private IEnumerator Idle() // Doing absolutely nothing but stand around there
     {
         yield return new WaitForSeconds(Random.Range(2f, 4f));
         StartCoroutine(BrowseShelves());
@@ -120,7 +120,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private void ToDestination() // Go to destination point
     {
         if (arrested) { return; }
-        if (targetDestination.position != currentTargetDestination)
+        if (targetDestination.position != currentTargetDestination) // Check if the new destination point is actually new
         {
             currentTargetDestination = targetDestination.position;
             navMeshAgent.SetDestination(targetDestination.position);
@@ -129,10 +129,10 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     
     private IEnumerator OnArrest()
     {
-        navMeshAgent.enabled = false;
-        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime));
+        navMeshAgent.enabled = false; // Stop the NPC completely
+        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime)); // Add or remove points
         yield return new WaitForSeconds(2f);
-        nPCSpawner.NPCList.Remove(gameObject);
+        nPCSpawner.NPCList.Remove(gameObject); // To allow new NPCs to spawn
         Destroy(gameObject);
     }
 }

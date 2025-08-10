@@ -15,7 +15,7 @@ public class PointsScript : MonoBehaviour
     public static void ModifyPoints(bool StoleItem, int value, int time = 0)
     {
         int pointChange;
-        if (!StoleItem || value < 0)
+        if (!StoleItem || value < 0) // Check if the NPC stole anything or is an innocent
         {
             pointChange = -2;
             innocents++;
@@ -43,7 +43,7 @@ public class PointsScript : MonoBehaviour
         Debug.Log("Points: " + points + ", Time: " + time);
     }
 
-    public static void ResetPoints()
+    public static void ResetPoints() // Reset points after game end
     {
         points = 0;
         innocents = 0;

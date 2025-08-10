@@ -27,9 +27,12 @@ public class PlayerUIFunctions : MonoBehaviour
     private TextMeshProUGUI escapedText;
     private TextMeshProUGUI totalPointsText;
     private Button returnButton;
+    private Transform playerFollowCamera;
 
     void Start()
     {
+        // Mapping variables
+        playerFollowCamera = transform.parent.parent.Find("PlayerFollowCamera");
         endCredits = transform.Find("End Credits Bg");
         totalArrestedText = endCredits.Find("Total Arrested").GetComponent<TextMeshProUGUI>();
         shopliftersArrestedText = endCredits.Find("Shoplifters").GetComponent<TextMeshProUGUI>();
@@ -54,10 +57,10 @@ public class PlayerUIFunctions : MonoBehaviour
         while (true)
         {
 
-            while (starterAssetsInputs.sprint)
+            while (starterAssetsInputs.sprint && playerFollowCamera.gameObject.activeSelf == true)
             {
 
-                while (starterAssetsInputs.move != Vector2.zero)
+                while (starterAssetsInputs.move != Vector2.zero && playerFollowCamera.gameObject.activeSelf == true) // Check if player is moving and if the camera is on the player
                 {
                     if (CurrentStamina > 0)
                     {
@@ -78,7 +81,7 @@ public class PlayerUIFunctions : MonoBehaviour
                 yield return null;
             }
 
-            while (!starterAssetsInputs.sprint)
+            while (!starterAssetsInputs.sprint && playerFollowCamera.gameObject.activeSelf == true)
             {
                 if (CurrentStamina < maxStamina)
                 {
@@ -96,13 +99,13 @@ public class PlayerUIFunctions : MonoBehaviour
         }
     }
 
-    private void ReturnToTitle()
+    private void ReturnToTitle() // Reset the whole game
     {
         PointsScript.ResetPoints();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0); // Return to title screen
     }
 
-    public void OnGameEnd()
+    public void OnGameEnd() // Load all statistics to the end screen
     {
         totalArrestedText.text = string.Format("{0}", PointsScript.innocents + PointsScript.shoplifters);
         shopliftersArrestedText.text = string.Format("{0}", PointsScript.shoplifters);
