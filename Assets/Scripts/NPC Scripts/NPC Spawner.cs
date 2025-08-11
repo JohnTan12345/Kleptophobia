@@ -22,13 +22,14 @@ public class NPCSpawner : MonoBehaviour
     private string targetNPCType;
     private List<Transform> spawnpoints = new List<Transform> { };
     public List<GameObject> NPCList = new List<GameObject> { };
-    public List<GameObject> PossibleItems = new List<GameObject> { };
 
     // Lists to carry over
     private List<Transform> shelvesPoints = new List<Transform> { };
     private List<Transform> registerPoints = new List<Transform> { };
+    public List<GameObject> PossibleItems = new List<GameObject> { };
+    public GameObject MoneyVFX;
 
-    public GameObject[] NPCPrefabs = {};
+    public GameObject[] NPCPrefabs = { };
 
     public GameObject NPCGroup;
     public GameObject shelvesGroup;
@@ -127,6 +128,7 @@ public class NPCSpawner : MonoBehaviour
                 {
                     InnocentNPCBehaviour innocentNPCBehaviour = NPC.AddComponent<InnocentNPCBehaviour>();
                     innocentNPCBehaviour.RegisterPoints = registerPoints;
+                    innocentNPCBehaviour.moneyVFX = MoneyVFX;
                 }
                 else if (targetNPCType == "careless")
                 {

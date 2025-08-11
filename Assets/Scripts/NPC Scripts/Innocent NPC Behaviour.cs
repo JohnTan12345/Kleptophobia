@@ -30,6 +30,8 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private int points = -2;
     private Animator animator;
     private Transform itemSlot;
+    public GameObject moneyVFX;
+    private Transform VFXSpawn;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
     public bool StoleItem { get { return stoleItem; } set { stoleItem = value; }}
@@ -44,6 +46,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
 
     void Start()
     {
+        VFXSpawn = transform.Find("VFX");
         animator = transform.Find("Rig").GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         browsinglength = Random.Range(1, shelvesPoints.Count);
@@ -143,6 +146,13 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
             // To add VFX for paying later
             checkingOut = false;
             reachedDestination = false;
+            GameObject vfx = Instantiate(moneyVFX, VFXSpawn.position, VFXSpawn.rotation, VFXSpawn);
+            ParticleSystem vfxPS = vfx.GetComponent<ParticleSystem>();
+            if (vfxPS != null)
+            {
+                vfxPS.Play();
+            }
+            
             yield return StartCoroutine(Idle());
 
             while (!reachedDestination)
