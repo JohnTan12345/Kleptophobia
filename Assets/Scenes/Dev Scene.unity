@@ -1102,6 +1102,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1527392445}
+    - target: {fileID: 6692440477924615173, guid: e6338739a481ea443b0c653784b31ca5, type: 3}
+      propertyPath: m_VersionIndex
+      value: 1951
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2070,9 +2074,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPCSpawnrate: 3
-  totalGuilty: 2
-  totalNPC: 15
+  totalGuilty: 1
+  totalNPC: 1
   NPCList: []
+  PossibleItems:
+  - {fileID: 2824918472953322845, guid: 80f77cfc6c9042746b8937d81a6e6e45, type: 3}
+  - {fileID: 7390446096421177305, guid: 8ee40371993c67844838f8d280f226c1, type: 3}
+  - {fileID: 3074581262201921701, guid: 714627e211e965b45a6651a073be1edb, type: 3}
+  - {fileID: 6865772898788678194, guid: 02bfd94a3d8e955468abdf7ae2f09abe, type: 3}
+  - {fileID: 4282906577189677125, guid: 2cfafc0a25fc54943a7f16ddb2466921, type: 3}
+  - {fileID: 6184459590555080340, guid: 82557523b8347534ab8d0b94028ffc53, type: 3}
+  - {fileID: 2031342803627263015, guid: ca492bd46ae37cf4c9edde95d261933f, type: 3}
+  - {fileID: 8943224268638361207, guid: 524fc4087188b9643b371cef7c29086b, type: 3}
+  - {fileID: 2988964694441689313, guid: 5c5a1f73b0747fb40a6c24d2b8f0dbf2, type: 3}
+  - {fileID: 872287231963919876, guid: ae2961929d0afea43a06b7da5d3a90dc, type: 3}
   NPCPrefabs:
   - {fileID: 239408546939574915, guid: 67c82f6e107db97408f53799348abacc, type: 3}
   - {fileID: 2989293434852080873, guid: 2e8bd18538fbc9f448ae5581b37966dc, type: 3}
@@ -2085,9 +2100,9 @@ MonoBehaviour:
   NPCGroup: {fileID: 785146955}
   shelvesGroup: {fileID: 1305544013}
   registerGroup: {fileID: 1263108278}
-  testing: 0
+  testing: 1
   spawnInnocents: 0
-  NPCOption: careless
+  NPCOption: scared
   spawnedNPC: 0
 --- !u!114 &254344819
 MonoBehaviour:
@@ -9322,6 +9337,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1657298406}
+    - target: {fileID: 6692440477924615173, guid: e6338739a481ea443b0c653784b31ca5, type: 3}
+      propertyPath: m_VersionIndex
+      value: 1951
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -14876,7 +14895,7 @@ PrefabInstance:
     - target: {fileID: 4510321042793352911, guid: e6338739a481ea443b0c653784b31ca5, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1657298406}
+      objectReference: {fileID: 1703104028}
     - target: {fileID: 5450568009638191874, guid: e6338739a481ea443b0c653784b31ca5, type: 3}
       propertyPath: m_Name
       value: Register (3)
@@ -14929,6 +14948,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1703104028}
+    - target: {fileID: 6692440477924615173, guid: e6338739a481ea443b0c653784b31ca5, type: 3}
+      propertyPath: m_VersionIndex
+      value: 1951
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

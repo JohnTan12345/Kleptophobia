@@ -13,5 +13,7 @@ public interface NPCBehaviour
     int Points { get; }
     List<Transform> ShelvesPoints { set; }
     List<Transform> Spawnpoints { set; }
+    List<GameObject> Items { set; }
     NPCSpawner NPCSpawner { set; }
+    Transform ItemSlot { set; }
 }

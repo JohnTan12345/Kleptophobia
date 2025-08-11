@@ -22,6 +22,7 @@ public class NPCSpawner : MonoBehaviour
     private string targetNPCType;
     private List<Transform> spawnpoints = new List<Transform> { };
     public List<GameObject> NPCList = new List<GameObject> { };
+    public List<GameObject> PossibleItems = new List<GameObject> { };
 
     // Lists to carry over
     private List<Transform> shelvesPoints = new List<Transform> { };
@@ -144,6 +145,8 @@ public class NPCSpawner : MonoBehaviour
                 nPCBehaviour.ShelvesPoints = shelvesPoints;
                 nPCBehaviour.Spawnpoints = spawnpoints;
                 nPCBehaviour.NPCSpawner = this;
+                nPCBehaviour.Items = PossibleItems;
+                nPCBehaviour.ItemSlot = NPC.GetComponent<NPCVariable>().ItemSlot.transform;
 
                 NPCList.Add(NPC);
                 DebounceScript debounce = NPC.AddComponent<DebounceScript>(); // Add in a "recently spawned" check that disables itself after a certain time

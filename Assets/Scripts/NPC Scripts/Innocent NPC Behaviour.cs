@@ -14,8 +14,11 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private List<Transform> shelvesPoints;
     private List<Transform> registerPoints;
     private List<Transform> spawnpoints;
+    private List<GameObject> items;
     private NPCSpawner nPCSpawner;
+    [SerializeField]
     private bool reachedDestination = false;
+    [SerializeField]
     private int browsinglength;
     private Transform targetDestination;
     private Vector3 currentTargetDestination = Vector3.zero;
@@ -25,40 +28,23 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private NavMeshAgent navMeshAgent;
     private bool stoleItem = false;
     private int points = -2;
+    private Animator animator;
+    private Transform itemSlot;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
-    public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
-    public int Points {get { return points; }}
-    public NPCSpawner NPCSpawner {set { nPCSpawner = value; }}
-
-    public Transform TargetDestination { get { return targetDestination; } }
-
-    public List<Transform> ShelvesPoints
-    {
-        set
-        {
-            shelvesPoints = new List<Transform>(value);
-        }
-    }
-
-    public List<Transform> RegisterPoints
-    {
-        set
-        {
-            registerPoints = new List<Transform>(value);
-        }
-    }
-
-    public List<Transform> Spawnpoints
-    {
-        set
-        {
-            spawnpoints = new List<Transform>(value);
-        }
-    }
+    public bool StoleItem { get { return stoleItem; } set { stoleItem = value; }}
+    public int Points { get { return points; }}
+    public NPCSpawner NPCSpawner { set { nPCSpawner = value; }}
+    public Transform TargetDestination { get { return targetDestination; }}
+    public List<Transform> ShelvesPoints { set { shelvesPoints = new List<Transform>(value); }}
+    public List<Transform> RegisterPoints { set { registerPoints = new List<Transform>(value); }}
+    public List<Transform> Spawnpoints { set { spawnpoints = new List<Transform>(value); }}
+    public List<GameObject> Items {set{ items = new List<GameObject>(value); }}    
+    public Transform ItemSlot { set { itemSlot = value; } }
 
     void Start()
     {
+        animator = transform.Find("Rig").GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         browsinglength = Random.Range(1, shelvesPoints.Count);
         StartCoroutine(ShopActivities());
@@ -68,6 +54,8 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     {
         if (targetDestination != null && other.gameObject == targetDestination.gameObject)
         {
+            animator.ResetTrigger("Walk"); animator.ResetTrigger("Run"); animator.SetTrigger("Take");
+            animator.SetTrigger("Idle");
             reachedDestination = true;
         }
     }
@@ -179,16 +167,20 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
         if (arrested) { return; }
         if (targetDestination.position != currentTargetDestination)
         {
-            currentTargetDestination = targetDestination.position;
-            navMeshAgent.SetDestination(targetDestination.position);
+        animator.ResetTrigger("Idle"); animator.ResetTrigger("Take"); animator.ResetTrigger("Run");
+        animator.SetTrigger("Walk");
+        currentTargetDestination = targetDestination.position;
+        navMeshAgent.SetDestination(targetDestination.position);
         }
     }
 
     private IEnumerator OnArrest()
     {
+        animator.ResetTrigger("Idle"); animator.ResetTrigger("Walk"); animator.ResetTrigger("Take"); animator.ResetTrigger("Run"); // Stop all animations
+        animator.SetTrigger("Arrested");
         navMeshAgent.enabled = false; // Stop the NPC completely
         PointsScript.ModifyPoints(stoleItem, points); // Add or remove points
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(6f);
         nPCSpawner.NPCList.Remove(gameObject); // To allow new NPCs to spawn
         Destroy(gameObject);
     }

@@ -13,6 +13,7 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 {
     private List<Transform> shelvesPoints;
     private List<Transform> spawnpoints;
+    private List<GameObject> items;
     private NPCSpawner nPCSpawner;
     private int browsingLength;
     private bool reachedDestination = false;
@@ -27,16 +28,20 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private bool stoleItem = false;
     private int points = 2;
     private float trackedTime = 0;
+    private Animator animator;
+    private Transform itemSlot;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
     public bool StoleItem {get { return stoleItem; } set { stoleItem = value; }}
     public int Points {get { return points; }}
     public List<Transform> ShelvesPoints {set { shelvesPoints = new List<Transform>(value); }}
     public List<Transform> Spawnpoints { set { spawnpoints = new List<Transform>(value); }}
+    public List<GameObject> Items {set{ items = new List<GameObject>(value); }}    
     public NPCSpawner NPCSpawner { set { nPCSpawner = value; } }
-
+    public Transform ItemSlot {set { itemSlot = value; }}
     void Start()
     {
+        animator = transform.Find("Rig").GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         browsingLength = Random.Range(1, shelvesPoints.Count);
         StartCoroutine(BrowseShelves());
@@ -46,6 +51,8 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     {
         if (other.gameObject == targetDestination.gameObject)
         {
+            animator.ResetTrigger("Walk"); animator.ResetTrigger("Run"); animator.SetTrigger("Take");
+            animator.SetTrigger("Idle");
             reachedDestination = true;
         }
     }
@@ -106,9 +113,12 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
 
     private IEnumerator Stealing()
     {
+        animator.ResetTrigger("Idle"); animator.ResetTrigger("Walk"); animator.ResetTrigger("Run");
+        animator.SetTrigger("Take");
         Debug.Log(string.Format("Careless Shoplifter {0} stole something", gameObject));
         StoleItem = true;
-        yield return new WaitForSeconds(Random.Range(1f, 2f));
+        Instantiate(items[Random.Range(0, items.Count - 1)], itemSlot.position, itemSlot.rotation, itemSlot);
+        yield return new WaitForSeconds(Random.Range(3f, 4f));
         StartCoroutine(BrowseShelves());
 
         //if (itemPrefab && handSlot)
@@ -120,18 +130,22 @@ public class CarelessShoplifterBehaviour : MonoBehaviour, NPCBehaviour
     private void ToDestination() // Go to destination point
     {
         if (arrested) { return; }
-        if (targetDestination.position != currentTargetDestination) // Check if the new destination point is actually new
+        if (targetDestination.position != currentTargetDestination)
         {
-            currentTargetDestination = targetDestination.position;
-            navMeshAgent.SetDestination(targetDestination.position);
+        animator.ResetTrigger("Idle"); animator.ResetTrigger("Take"); animator.ResetTrigger("Run");
+        animator.SetTrigger("Walk");
+        currentTargetDestination = targetDestination.position;
+        navMeshAgent.SetDestination(targetDestination.position);
         }
     }
     
     private IEnumerator OnArrest()
     {
+        animator.ResetTrigger("Idle"); animator.ResetTrigger("Walk"); animator.ResetTrigger("Take"); animator.ResetTrigger("Run"); // Stop all animations
+        animator.SetTrigger("Arrested");
         navMeshAgent.enabled = false; // Stop the NPC completely
-        PointsScript.ModifyPoints(stoleItem, points, Mathf.RoundToInt(trackedTime)); // Add or remove points
-        yield return new WaitForSeconds(2f);
+        PointsScript.ModifyPoints(stoleItem, points); // Add or remove points
+        yield return new WaitForSeconds(6f);
         nPCSpawner.NPCList.Remove(gameObject); // To allow new NPCs to spawn
         Destroy(gameObject);
     }
