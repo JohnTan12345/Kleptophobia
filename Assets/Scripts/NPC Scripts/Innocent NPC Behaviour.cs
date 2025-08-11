@@ -155,11 +155,10 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
             
             yield return StartCoroutine(Idle());
 
+            targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
             while (!reachedDestination)
             {
                 if (arrested) { yield break; }
-
-                targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
                 ToDestination();
                 yield return null;
             }

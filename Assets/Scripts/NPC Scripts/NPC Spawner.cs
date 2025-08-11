@@ -32,8 +32,6 @@ public class NPCSpawner : MonoBehaviour
     public GameObject[] NPCPrefabs = { };
 
     public GameObject NPCGroup;
-    public GameObject shelvesGroup;
-    public GameObject registerGroup;
 
     // For Testing Purposes
     [Header("Testing Parameters")]
@@ -52,14 +50,14 @@ public class NPCSpawner : MonoBehaviour
         }
         ;
 
-        foreach (Transform shelf in shelvesGroup.transform) // May change to tag based
+        foreach (GameObject shelfDestination in GameObject.FindGameObjectsWithTag("Shelves")) // May change to tag based
         {
-            shelvesPoints.Add(shelf.Find("Destination"));
+            shelvesPoints.Add(shelfDestination.transform);
         };
 
-        foreach (Transform register in registerGroup.transform) // May change to tag based
+        foreach (GameObject register in GameObject.FindGameObjectsWithTag("Register")) // May change to tag based
         {
-            registerPoints.Add(register.Find("Destination"));
+            registerPoints.Add(register.transform.Find("Destination"));
         };
 
         StartCoroutine(SpawnNPC());

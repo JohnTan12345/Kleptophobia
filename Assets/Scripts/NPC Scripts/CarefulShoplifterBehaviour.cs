@@ -88,9 +88,9 @@ public class CarefulShoplifterBehaviour : MonoBehaviour, NPCBehaviour
         }
         else
         {
+            targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
             while (!reachedDestination) // Go home
             {
-                targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
                 ToDestination();
                 yield return null;
             }

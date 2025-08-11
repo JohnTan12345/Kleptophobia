@@ -88,11 +88,10 @@ public class ScaredNPCBehaviour : MonoBehaviour, NPCBehaviour
         }
         else
         {
+            targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
             while (!reachedDestination)
             {
                 if (arrested || isFleeing) { yield break; }
-
-                targetDestination = spawnpoints[Random.Range(0, spawnpoints.Count - 1)];
                 ToDestination();
                 yield return null;
             }

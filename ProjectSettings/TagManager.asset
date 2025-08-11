@@ -9,6 +9,8 @@ TagManager:
   - Customer
   - Interactable
   - Monitor
+  - Register
+  - Shelves
   layers:
   - Default
   - TransparentFX
