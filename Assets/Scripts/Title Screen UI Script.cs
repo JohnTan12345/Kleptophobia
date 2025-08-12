@@ -59,6 +59,8 @@ public class TitleScreenUIScript : MonoBehaviour
     {
         Debug.Log("Changing!");
         SceneManager.LoadScene(1); // Start the game
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
 }
