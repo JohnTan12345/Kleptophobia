@@ -31,6 +31,9 @@ public class CCTVMonitor : MonoBehaviour
     private MeshRenderer meshRenderer;
     static List<int> UsedCameras = new List<int>();
 
+    //Sound effects
+    public AudioClip cameraSwitchSFX;
+
     void Start()
     {
         // UI Mapping
@@ -156,6 +159,7 @@ public class CCTVMonitor : MonoBehaviour
         UsedCameras.Remove(cameraNumber);
         UsedCameras.Add(newCamera);
         cameraNumber = newCamera;
+        AudioSource.PlayClipAtPoint(cameraSwitchSFX, transform.position);
         DisplayCameraFeed();
     }
 }

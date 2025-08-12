@@ -23,6 +23,8 @@ public class Interaction : MonoBehaviour
     private Transform playerFollowCamera;
     private CanvasGroup playerUI;
 
+    public AudioClip arrestSFX;
+
     // Camera Original Settings
     private Transform cameraParent;
     private Vector3 cameraPosition;
@@ -77,6 +79,7 @@ public class Interaction : MonoBehaviour
         else if (arrestUI != null && !arrestUI.Arrested)
         {
             arrestUI.Arrested = true; // Set the Arrested variable in the NPC to true
+            AudioSource.PlayClipAtPoint(arrestSFX, transform.position);
         }
     }
 

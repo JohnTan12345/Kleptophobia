@@ -31,6 +31,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
     private Animator animator;
     private Transform itemSlot;
     public GameObject moneyVFX;
+    public AudioClip moneySFX;
     private Transform VFXSpawn;
 
     public bool Arrested { get { return arrested; } set { arrested = value; StartCoroutine(OnArrest()); } }
@@ -152,6 +153,7 @@ public class InnocentNPCBehaviour : MonoBehaviour, NPCBehaviour
             {
                 vfxPS.Play();
             }
+            AudioSource.PlayClipAtPoint(moneySFX, transform.position);
             
             yield return StartCoroutine(Idle());
 

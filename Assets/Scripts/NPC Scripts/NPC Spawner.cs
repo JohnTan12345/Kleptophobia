@@ -28,6 +28,7 @@ public class NPCSpawner : MonoBehaviour
     private List<Transform> registerPoints = new List<Transform> { };
     public List<GameObject> PossibleItems = new List<GameObject> { };
     public GameObject MoneyVFX;
+    public AudioClip MoneySFX;
 
     public GameObject[] NPCPrefabs = { };
 
@@ -127,6 +128,7 @@ public class NPCSpawner : MonoBehaviour
                     InnocentNPCBehaviour innocentNPCBehaviour = NPC.AddComponent<InnocentNPCBehaviour>();
                     innocentNPCBehaviour.RegisterPoints = registerPoints;
                     innocentNPCBehaviour.moneyVFX = MoneyVFX;
+                    innocentNPCBehaviour.moneySFX = MoneySFX;
                 }
                 else if (targetNPCType == "careless")
                 {
