@@ -107,6 +107,10 @@ public class PlayerUIFunctions : MonoBehaviour
 
     public void OnGameEnd() // Load all statistics to the end screen
     {
+        starterAssetsInputs.cursorInputForLook = false;
+        starterAssetsInputs.cursorLocked = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         totalArrestedText.text = string.Format("{0}", PointsScript.innocents + PointsScript.shoplifters);
         shopliftersArrestedText.text = string.Format("{0}", PointsScript.shoplifters);
         innocentsArrestedText.text = string.Format("{0}", PointsScript.innocents);
