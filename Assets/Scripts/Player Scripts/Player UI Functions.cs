@@ -28,6 +28,7 @@ public class PlayerUIFunctions : MonoBehaviour
     private TextMeshProUGUI totalPointsText;
     private Button returnButton;
     private Transform playerFollowCamera;
+    public static bool gameEnd = false;
 
     void Start()
     {
@@ -107,10 +108,12 @@ public class PlayerUIFunctions : MonoBehaviour
 
     public void OnGameEnd() // Load all statistics to the end screen
     {
+        gameEnd = true;
         starterAssetsInputs.cursorInputForLook = false;
         starterAssetsInputs.cursorLocked = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
         totalArrestedText.text = string.Format("{0}", PointsScript.innocents + PointsScript.shoplifters);
         shopliftersArrestedText.text = string.Format("{0}", PointsScript.shoplifters);
         innocentsArrestedText.text = string.Format("{0}", PointsScript.innocents);

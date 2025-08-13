@@ -103,8 +103,12 @@ public class Interaction : MonoBehaviour
         cameraRotation = playerCamera.transform.rotation;
 
         SwitchPlayerStates(false);
-        Cursor.lockState = CursorLockMode.None; // Force the cursor to unlock itself
-        Cursor.visible = true; // Make the cursor visible
+        if (!PlayerUIFunctions.gameEnd)
+        {
+            Cursor.lockState = CursorLockMode.None; // Force the cursor to unlock itself
+            Cursor.visible = true; // Make the cursor visible
+        }
+        
 
         // Make the player UI disappear
         playerUI.alpha = 0f;
@@ -125,11 +129,14 @@ public class Interaction : MonoBehaviour
         playerCamera.transform.parent = cameraParent;
 
         SwitchPlayerStates(true);
-        Cursor.lockState = CursorLockMode.Locked; // Force the cursor to lock itself
-        Cursor.visible = false; // Make the cursor invisible
+        if (!PlayerUIFunctions.gameEnd)
+        {
+            Cursor.lockState = CursorLockMode.Locked; // Force the cursor to lock itself
+            Cursor.visible = false; // Make the cursor invisible
+        }
 
         // Make the player UI appear
-        playerUI.alpha = 1f;
+            playerUI.alpha = 1f;
         playerUI.interactable = true;
         playerUI.blocksRaycasts = true;
     }
@@ -138,8 +145,11 @@ public class Interaction : MonoBehaviour
     {
         playerFollowCamera.gameObject.SetActive(state); // To allow the player camera to move
         firstPersonController.enabled = state; // Stop all movement
-        starterAssetsInputs.cursorInputForLook = state; // Stop the player from looking around
-        starterAssetsInputs.cursorLocked = state; // Frees the mouse
+        if (!PlayerUIFunctions.gameEnd)
+        {
+            starterAssetsInputs.cursorInputForLook = state; // Stop the player from looking around
+            starterAssetsInputs.cursorLocked = state; // Frees the mouse
+        }
 
         usingCams = !state;
     }
